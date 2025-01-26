@@ -1,13 +1,14 @@
-from flask import Flask
-from backend.routes import setup_routes
+from flask import Flask, render_template
 
-app = Flask(__name__, static_folder="frontend", template_folder="frontend")
+# Specify static and template folder paths relative to the project root
+app = Flask(__name__, 
+            static_folder='frontend/static', 
+            template_folder='frontend/template', 
+            static_url_path='/static')
 
-@app.route("/")
+@app.route('/')
 def home():
-    return app.send_static_file("home.html")
-    
-setup_routes(app)
+    return render_template('home.html')  # Flask will look in 'frontend/template' folder
 
 if __name__ == "__main__":
     app.run(debug=True)
