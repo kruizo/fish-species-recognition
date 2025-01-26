@@ -1,0 +1,54 @@
+.header {
+    border-bottom: 1px solid white;
+    background-color: black;
+    height: 55px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+
+    z-index: 1000;
+}
+
+.left-section {
+    display: flex;
+    align-items: center;
+}
+
+.logo {
+    margin-left: 20px;
+}
+
+.title {
+    font-weight: bold;
+}
+
+.right-section {
+    display: flex;
+    align-items: center;
+}
+
+.right-section div:hover {
+    color: rgb(29, 155, 240);
+    cursor: pointer;
+}
+
+.right-section button {
+    color: rgb(29, 155, 240);
+    font-weight: bold;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    padding: 10px 15px 10px 15px;
+}
+
+.left-section div,
+.right-section div {
+    margin-left: 10px;
+    margin-right: 20px;
+}
+

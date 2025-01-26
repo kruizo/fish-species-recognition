@@ -1,0 +1,228 @@
+main {
+    color: white;
+    background-color: black;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    padding-top: 50px;
+    margin-top: 60px;
+    overflow: auto;
+}
+
+/*=========================== HOME PAGE */
+.home-section-1,
+.home-section-2 {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 50px;
+}
+
+.home-section-1 .title {
+    font-size: 30px;
+    margin-bottom: 15px;
+}
+
+.home-section-1 .subtitle-span {
+    color: rgb(29, 155, 240);
+    font-size: 15px;
+    font-weight: bold;
+}
+
+#drop-area{
+    width: 500px;
+    border-style: solid;
+    border-width: 1px;
+    border-color: rgb(29, 155, 240);
+    border-radius: 10px;
+    padding-top: 50px;
+    padding-bottom: 50px;
+    margin-bottom: 50px;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+#drop-area img {
+    height: 50px;
+    width: 50px;
+    margin-bottom: 20px;
+}
+
+#drop-area p {
+    margin-bottom: 20px;
+}
+
+#drop-area input {
+    width: fit-content;
+    margin-bottom: 20px;
+}
+
+#drop-area button {
+    color: white;
+    background-color: rgb(29, 155, 240);
+    font-weight: bold;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    padding: 10px 50px 10px 50px;
+}
+
+#drop-area span {
+    
+}
+
+#identify-button {
+    color: rgb(29, 155, 240);
+    font-weight: bold;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    padding: 10px 15px 10px 15px;
+}
+
+/*=========================== RESULT PAGE */
+
+.result-section-1 {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 75px;
+}
+
+.result-section-1 p {
+    font-weight: bold;
+    font-size: 20px;
+    margin-bottom: 15px;
+}
+
+.result-section-1 input {
+    background-color: black;
+    color: white;
+    width: 400px;
+    border: solid;
+    border-color: rgb(33, 32, 32);
+    border-radius: 10px;
+    padding: 15px;
+    margin-bottom: 15px;
+}
+
+.result-section-1 .upload-btn {
+    color: white;
+    background-color: rgb(29, 155, 240);
+    font-weight: bold;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    padding: 10px 50px 10px 50px;
+
+    margin-right: 10px;
+}
+
+.result-section-1 .retry-btn {
+    color: rgb(29, 155, 240);
+    background-color: white;
+    font-weight: bold;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    padding: 10px 50px 10px 50px;
+}
+
+.result-section-2 {
+    width: 800px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin-bottom: 50px;
+}
+
+.result-section-2 .left,
+.result-section-2 .right {
+    border: solid;
+    border-width: 1px;
+    border-radius: 10px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.result-section-2 .left p,
+.result-section-2 .right p {
+    margin-bottom: 20px;
+}
+
+.result-section-2 .left .p1,
+.result-section-2 .right .p1 {
+    font-weight: bold;
+    font-size: 20px;
+}
+
+.result-section-2 .left .span1 {
+    color: red;
+}
+.result-section-2 .right .span1 {
+    color: lightgreen;
+}
+
+.result-section-2 .left .p3,
+.result-section-2 .right .p3 {
+    font-weight: bold;
+} 
+
+.result-section-2 .left .p4,
+.result-section-2 .right .p4 {
+    color: lightgreen;
+    font-weight: bold;
+    margin-bottom: 0;
+}
+
+.result-section-2 .center {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.result-section-2 .center img {
+    object-fit: fill;
+    height: 150px;
+    width: 150px;
+    border: none;
+    border-radius: 10px;
+    margin-bottom: 10px;
+}
+
+.result-section-2 .center p {
+    font-weight: bold;
+}
+
+.result-section-3 {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+
+.result-section-3-scrolldown {
+    text-align: justify;
+    width: 800px;
+}
+
+.result-section-4 {
+    max-width: 800px;
+    margin-top: 75px;
+    text-align: center;
+}
+
+
+
