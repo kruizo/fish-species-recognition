@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='styles/general.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='styles/header.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='styles/main.css') }}"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  </head>
+  <body>
+    <header class="header">
+      <div class="left-section">
+        <img
+          class="logo"
+          src="{{ url_for('static', filename='icons/sample.svg') }}"
+          alt=""
+        />
+        <div class="title">FishID</div>
+      </div>
+      <div class="right-section">
+        <div onclick="showContent('home')">Home</div>
+        <div onclick="showContent('donate')">Donate</div>
+        <div onclick="showContent('about')">About Us</div>
+        <div onclick="showContent('how-to')">How to Use</div>
+        <div>
+          <button>Sign In</button>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <!-- Home Section -->
+      <section id="home" class="content-section">
+        <div class="home-section-1">
+          <p class="title">Fish Specie Classifier</p>
+          <p class="subtitle">
+            A classification model which can classify up to
+            <span class="subtitle-span">18</span> species!
+          </p>
+        </div>
+
+        <div class="home-section-2">
+          <label for="input-file" id="drop-area">
+            <img
+              src="{{ url_for('static', filename='icons/upload.svg') }}"
+              alt=""
+            />
+            <p>Drag or upload an Image File</p>
+            <input type="file" accept="image/*" id="input-file" hidden />
+            <button>Choose Image</button>
+          </label>
+        </div>
+      </section>
+      <!-- Donate Section -->
+      <section id="donate" class="content-section" style="display: none">
+        <h2>Donate</h2>
+        <p>Help us with donations.</p>
+      </section>
+
+      <!-- About Us Section -->
+      <section id="about" class="content-section" style="display: none">
+        <h2>About Us</h2>
+        <p>This is the about us page.</p>
+      </section>
+
+      <!-- How to Use Section -->
+      <section id="how-to" class="content-section" style="display: none">
+        <h2>How to Use</h2>
+        <p>Learn how to use FishID.</p>
+      </section>
+
+      <!-- Result Section (New Section that will be shown after clicking "Choose Image") -->
+      <section id="result" class="content-section" style="display: none">
+        <div class="result-section-1">
+          <p>Fish Specie Classifier</p>
+          <input type="text" value="fish_000004210001_0019.jpg" readonly />
+          <div>
+            <button class="upload-btn">Upload New Image</button>
+            <button class="retry-btn">Retry</button>
+          </div>
+        </div>
+
+        <div class="result-section-2">
+          <div class="left">
+            <p class="p1">Basline</p>
+            <p>Guessed in <spam class="span1">5</spam>ms</p>
+            <p class="p3">Barracuda</p>
+            <p class="p4">90% AC</p>
+          </div>
+          <div class="center">
+            <img
+              src="{{ url_for('static', filename='images/barracuda.jpg') }}"
+              alt=""
+            />
+            <p>Barracuda</p>
+          </div>
+          <div class="right">
+            <p class="p1">Optimized</p>
+            <p>Guessed in <span class="span1">2</span>ms</p>
+            <p class="p3">Barracuda</p>
+            <p class="p4">91% AC</p>
+          </div>
+        </div>
+
+        <div class="result-section-3" onclick="toggleAdditionalContent()">
+          <p>Scroll down for more details</p>
+          <img
+            src="{{ url_for('static', filename='icons/arrow_down.svg') }}"
+            alt=""
+          />
+        </div>
+
+        <!-- Additional content hidden initially -->
+        <div
+          class="result-section-3-scrolldown"
+          id="additional-content"
+          style="display: none"
+        >
+          <p>
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus
+            eu efficitur nibh. Aliquam nec eros tempor, sodales felis vitae,
+            imperdiet odio. Morbi pellentesque, nunc ac mattis varius, odio
+            nulla suscipit ipsum, in ullamcorper dui quam id eros. Lorem ipsum
+            dolor sit amet, consectetur adipiscing elit. Curabitur condimentum
+            posuere felis eu dapibus. Ut suscipit congue accumsan. Curabitur ut
+            velit leo.
+          </p>
+        </div>
+
+        <div class="result-section-4">
+          <h3>Top 5 Match Species</h3>
+          <canvas id="topSpeciesChart"></canvas>
+        </div>
+      </section>
+    </main>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+  </body>
+</html>
