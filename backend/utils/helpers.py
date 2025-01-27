@@ -32,7 +32,7 @@ def preprocess_image_for_enhancement(image):
     """Loads and preprocesses an image for the model."""
     
     hr_image = np.array(image)
-    
+    a
     if hr_image.shape[-1] == 4:
         hr_image = hr_image[...,:-1]  
     
