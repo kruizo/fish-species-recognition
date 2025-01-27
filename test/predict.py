@@ -34,7 +34,7 @@ class_labels = [
 test_images_dir = 'test/images'
 output_dir = 'test/results'
 
-def main():
+def run():
     # predict one image
     image_path = 'test/images/fish_000065789596_04756.png'
     process_single_image(image_path, output_dir)
@@ -56,19 +56,18 @@ def process_single_image(image_path, output_dir):
     masked_image = UNET().mask(enhanced_image)
     print('Image masked...')
     
-    # Save the images for checking
     filename = os.path.basename(image_path)
     print(f"Saving Enhanced image: {filename}")
     save_image(enhanced_image, {"enhanced - " + filename}, output_dir)
     save_image(masked_image, {"masked - " + filename}, output_dir)
     print(f"Image saved: {filename}")
     
-    # Classify the image using baseline ResNet50
     print("Classifying the image...")
-    predicted_class = BASELINE_RESNET50().predict(masked_image)
+    predicted_class, confidence, prediction_time = BASELINE_RESNET50().predict(masked_image)
     predicted_class_name = class_labels[predicted_class]
-    print(f"Prediction: {predicted_class_name}")
+    print(f"Prediction: {predicted_class_name} | Confidence: {confidence} | Prediction Time: {prediction_time}")
     
+
     return predicted_class_name
 
 
@@ -87,4 +86,5 @@ def process_images_in_directory(test_images_dir, output_dir):
         print(result)
 
 
-main()
+if __name__ == "__main__":
+    run()
