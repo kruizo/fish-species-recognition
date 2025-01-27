@@ -1,3 +1,4 @@
+from operator import __not__
 import os
 import tensorflow as tf
 import torch 
@@ -17,4 +18,5 @@ def run_test_processor():
 
     print("Test complete.")
 
-    
+if __name__ == "__main__":
+    run_test_processor()
