@@ -6,11 +6,7 @@ IF NOT EXIST "venv" (
     call .\venv\Scripts\activate
     python init.py
     python app.py
-) 
-ELSE IF NOT "%VIRTUAL_ENV%"=="" (
-    echo Virtual environment is already activated.
-) 
-ELSE (
+) ELSE (
     call .\venv\Scripts\activate
 )
 
