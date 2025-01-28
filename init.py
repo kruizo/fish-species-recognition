@@ -9,32 +9,19 @@ def setup_environment():
 
     print("Activating virtual environment and installing dependencies...")
     
+    result = subprocess.run(f"pip3 install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118", shell=True)
+
+    if(result.returncode != 0):
+        print("Error installing torch, torchvision, torchaudio")
+        sys.exit(1)
+
     result2 = subprocess.run(f"pip install -r requirements.txt", shell=True)
 
-    print("INSTALL SUCCESSFUL PAKCAGES:")
+    if(result2.returncode != 0):
+        print("Error installing dependencies")
+        sys.exit(1)
     
     subprocess.run(f"pip list", shell=True)
-
-    # if result.returncode == 0:
-    #     print("Dependencies installed successfully.")
-        
-    #     print("Running test/run.py...")
-    #     result_test = subprocess.run(f"python test/run.py", shell=True)
-        
-    #     if result_test.returncode == 0:
-    #         print("Test script ran successfully.")
-            
-    #         print("Running server...")
-    #         result_app = subprocess.run(f"python app.py", shell=True)
-            
-    #         if result_app.returncode == 0:
-    #             print("App is running successfully.")
-    #         else:
-    #             print("Error running app.py.")
-    #     else:
-    #         print("Error running test/run.py.")
-    # else:
-    #     print("Error installing dependencies.")
 
 if __name__ == "__main__":
     setup_environment()
