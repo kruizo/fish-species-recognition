@@ -12,7 +12,7 @@ def predict_endpoint():
 
     file = request.files["file"]
 
-    return jsonify({"prediction": ""})
+    return jsonify({"prediction": "recieved"})
 
 def setup_routes(app):
     app.register_blueprint(api)
