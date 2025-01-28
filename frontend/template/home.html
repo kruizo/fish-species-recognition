@@ -48,15 +48,17 @@
         </div>
 
         <div class="home-section-2">
-          <label for="input-file" id="drop-area">
-            <img
-              src="{{ url_for('static', filename='icons/upload.svg') }}"
-              alt=""
-            />
-            <p>Drag or upload an Image File</p>
-            <input type="file" accept="image/*" id="input-file" hidden />
-            <button>Choose Image</button>
-          </label>
+          <form id="predict-form" enctype="multipart/form-data">
+            <label for="input-file" id="drop-area">
+              <img
+                src="{{ url_for('static', filename='icons/upload.svg') }}"
+                alt=""
+              />
+              <p>Drag or upload an Image File</p>
+              <input type="file" accept="image/*" id="input-file" hidden />
+              <button type="button" id="choose-btn">Choose Image</button>
+            </label>
+          </form>
         </div>
       </section>
       <!-- Donate Section -->

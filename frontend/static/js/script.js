@@ -29,15 +29,28 @@ dropArea.addEventListener("drop", handleDrop); // Handle file drop
 function handleFileUpload() {
     if (inputFile.files.length > 0) {
         const file = inputFile.files[0];
-
-        // Display file name
-        //fileNameDisplay.textContent = file.name;
-
-        // Make the "Identify" button visible
-        //identifyButton.style.display = "inline-block";
-
-        // Redirect to the result section
-        showContent('result'); // Automatically show the result section
+        // Create a FormData object to send the image
+        const formData = new FormData();
+        formData.append("file", file);
+    
+        // Send the file to the Flask API
+        fetch('/predict', {
+          method: 'POST',
+          body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.prediction) {
+            displayResult(data.prediction);
+            showContent('result'); 
+          } else {
+            alert('No prediction received.');
+          }
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          alert('Error uploading image.');
+        });
 
     } else {
         resetFileDisplay();
