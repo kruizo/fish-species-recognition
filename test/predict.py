@@ -41,7 +41,6 @@ def run():
     process_images_in_directory(test_images_dir)
 
 def process_single_image(image_path):
-    print("=====================================================================================")
     print('Image:', image_path)
     image = Image.open(image_path)
     # print('Image loaded...')
@@ -79,12 +78,12 @@ def process_single_image(image_path):
     
     # print("Classifying the image...")
     predicted_class, confidence, prediction_time = PROPOSED_RESNET50(device=device).predict(masked_image)
-    predicted_class_name = class_labels[predicted_class]
-    print(f"BASELINE Prediction: {class_labels[bpredicted_class]} | Confidence: {bconfiderence} | Prediction Time: {bprediction_time}")
-    print(f"PROPOSED Prediction: {predicted_class_name} | Confidence: {confidence} | Prediction Time: {prediction_time}")
+    print(f"BASELINE Prediction: {class_labels[bpredicted_class]} | Confidence: {bconfiderence:.2f} | Prediction Time: {bprediction_time:.3f}s")
+    print(f"PROPOSED Prediction: {class_labels[predicted_class]} | Confidence: {confidence:.2f} | Prediction Time: {prediction_time:.3f}s")
+
     print("=====================================================================================")
 
-    return predicted_class_name
+    return class_labels[predicted_class]
 
 
 
