@@ -20,13 +20,14 @@ class BaselineResNet(nn.Module):
         return x
 
 class BASELINE_RESNET50:
-    def __init__(self, model_path="backend/models/weights/torch_baselineb32notauglr001notenhancedvallacc82testacc80traintime3m_2sepoch5ratio70_20_10epoch5.pth", device=device):
-        self.model = torch.load(model_path, weights_only=False)
+    def __init__(self, model_path="backend/models/weights/torch_weights_baselineb32notauglr001notenhancedvallacc86testacc80traintime3m_2ssepoch5ratio70_20_10epoch5.pth", device='cpu'):
+        self.model = models.resnet50(weights="IMAGENET1K_V1")
         self.device = torch.device(device)
-        self.model.to(device)
+        self.model = BaselineResNet(self.model).to(device)
+        self.model.load_state_dict(torch.load(model_path, weights_only=True))
 
     def predict(self, image):
-        image = preprocess_image_for_classifier(image)
+        image = preprocess_image_for_classifier(image).to(self.device)
 
         start_time = time.time()
         

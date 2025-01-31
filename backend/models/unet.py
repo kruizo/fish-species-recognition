@@ -22,7 +22,7 @@ class UNET:
         predicted_mask = predicted_mask.squeeze().cpu().numpy()
 
         # Ensure the output has a single channel (1, 224, 224)
-        binary_mask = (predicted_mask > 3).astype(np.uint8)
+        binary_mask = (predicted_mask > 0.3).astype(np.uint8)
 
 
 

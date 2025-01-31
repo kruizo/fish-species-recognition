@@ -49,6 +49,25 @@ def preprocess_image_for_segment(image):
 
     return image
 
+def save_image_as_png(image_tensor, filename, output_dir):
+    # Remove batch dimension (assuming batch size is 1)
+    image_tensor = image_tensor.squeeze(0)  # shape: [3, 224, 224]
+    
+    # Convert tensor to numpy array
+    image_np = image_tensor.cpu().numpy()  # shape: [3, 224, 224]
+
+    # Transpose the dimensions to [H, W, C]
+    image_np = np.transpose(image_np, (1, 2, 0))  # shape: [224, 224, 3]
+
+    # Scale the values to [0, 255] and convert to uint8
+    image_np = np.clip(image_np * 255, 0, 255).astype(np.uint8)
+
+    # Convert to PIL Image and save
+    image_pil = Image.fromarray(image_np)
+    image_pil.save(f"{output_dir}/{filename}", format="PNG")
+
+    # print(f"Image saved as {filename}.png")
+
 def save_image(image, filename, path):
     # If the image is a PyTorch tensor, convert to NumPy array
     if isinstance(image, torch.Tensor):
@@ -71,8 +90,8 @@ def save_image(image, filename, path):
         image = Image.fromarray(image)
 
     # Now that we have a PIL Image, we can save it
-    image.save(f"{path}/{filename}.png", format="PNG")
-    print(f"Saved as {filename}.png")
+    image.save(f"{path}/{filename}", format="PNG")
+    # print(f"Saved as {filename}.png")
 
 def conver_mask_numpy(image):
     if isinstance(image, torch.Tensor):
