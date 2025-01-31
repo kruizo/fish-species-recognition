@@ -7,21 +7,18 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 warnings.filterwarnings("ignore", category=DeprecationWarning)
 warnings.filterwarnings("ignore", category=FutureWarning)
 
+import numpy as np
 import torch
 torch.cuda.empty_cache()
 
 from PIL import Image, ImageFile
-ImageFile.LOAD_TRUNCATED_IMAGES = True
 
-from backend.models.baseline_resnet50 import BASELINE_RESNET50
+from backend.models.baseline import BASELINE_RESNET50
+from backend.models.proposed import PROPOSED_RESNET50
 from backend.models.unet import UNET
 from backend.models.esrgan import ESRGAN
-from backend.utils.helpers import save_image
+from backend.utils.helpers import convert_img_numpy, conver_mask_numpy, save_image
 
-
-# baseline_model = BASELINE_RESNET50()
-# esrgan_model = ESRGAN()
-# unet_model = UNET()
 
 class_labels = [
     'Abudefduf Vaigiensis', 'Acanthurus Nigrofuscus', 'Balistapus Undulatus', 'Canthigaster Valentini', 
@@ -33,15 +30,14 @@ class_labels = [
 
 test_images_dir = 'test/images'
 output_dir = 'test/results'
-
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 def run():
     # predict one image
-    image_path = 'test/images/fish_000065789596_04756.png'
+    image_path = 'test/images/fish_000026690001_02685.png'
     process_single_image(image_path, output_dir)
 
     # predict all image in dir
     # process_images_in_directory(test_images_dir, output_dir)
-
 
 def process_single_image(image_path, output_dir):
     # Load image
@@ -49,21 +45,30 @@ def process_single_image(image_path, output_dir):
     image = Image.open(image_path)
     print('Image loaded...')
     print('Enhancing image...')
-    enhanced_image = ESRGAN().enhance_image(image)
-    print('Image enhanced...')
+    enhanced_image, time_taken = ESRGAN(device=device).predict(image)
+    print('Image enhanced... TIME TAKEN: ', time_taken)
+    print('Image enhanced SHAPE:', enhanced_image.shape)
 
     print('Masking image...')
-    masked_image = UNET().mask(enhanced_image)
+
+    binary_mask = UNET(device=device).predict(enhanced_image)
     print('Image masked...')
     
+    print('Mask SHAPE:', binary_mask.shape)
+
+    enhanced_image = enhanced_image.squeeze().cpu().numpy().transpose(1, 2, 0)
+    masked_image = enhanced_image * np.expand_dims(binary_mask, axis=-1)
+    masked_image = (masked_image * 255).astype(np.uint8)
+    
+
     filename = os.path.basename(image_path)
     print(f"Saving Enhanced image: {filename}")
-    save_image(enhanced_image, {"enhanced - " + filename}, output_dir)
-    save_image(masked_image, {"masked - " + filename}, output_dir)
+    # save_image(enhanced_image, {"enhanced - " + filename}, output_dir)
+    # save_image(masked_image, {"masked - " + filename}, output_dir)
     print(f"Image saved: {filename}")
     
     print("Classifying the image...")
-    predicted_class, confidence, prediction_time = BASELINE_RESNET50().predict(masked_image)
+    predicted_class, confidence, prediction_time = PROPOSED_RESNET50(device=device).predict(masked_image)
     predicted_class_name = class_labels[predicted_class]
     print(f"Prediction: {predicted_class_name} | Confidence: {confidence} | Prediction Time: {prediction_time}")
     

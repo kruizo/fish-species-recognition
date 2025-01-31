@@ -18,57 +18,76 @@ def preprocess_image_for_classifier(image):
     if isinstance(image, np.ndarray):
         image = Image.fromarray(image)
 
-    image = image.convert('RGB')
-
-    image = Image.open(image).convert('RGB')
     transform = transforms.Compose([
         transforms.Resize((224, 224)),
         transforms.ToTensor(),
         transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
     ])
-    return transform(image).unsqueeze(0).to(torch.device("cuda" if torch.cuda.is_available() else "cpu"))
+    return transform(image.convert("RGB")).unsqueeze(0)
+
 
 def preprocess_image_for_enhancement(image):
-    """Loads and preprocesses an image for the model."""
-    
-    hr_image = np.array(image)
-    if hr_image.shape[-1] == 4:
-        hr_image = hr_image[...,:-1]  
-    
-    hr_size = (tf.convert_to_tensor(hr_image.shape[:-1]) // 4) * 4
-    hr_image = tf.image.crop_to_bounding_box(hr_image, 0, 0, hr_size[0], hr_size[1])
-    
-    hr_image = tf.cast(hr_image, tf.float32)
-    return tf.expand_dims(hr_image, 0)  
+    return transforms.ToTensor()(image.convert("RGB")).unsqueeze(0)
+
 
 def preprocess_image_for_segment(image):
     """Loads and preprocesses an image for the model."""
     
-    hr_image = np.array(image)
+    if isinstance(image, np.ndarray):
+        image = Image.fromarray(image)
     
-    if hr_image.shape[-1] == 4:
-        hr_image = hr_image[...,:-1] 
+    if isinstance(image, Image.Image):  # If the image is a PIL Image
+        transform = transforms.Compose([
+            transforms.Resize((224, 224)),
+            transforms.ToTensor(),
+            transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]) 
+        ])
+        image = transform(image)
     
-    hr_size = (tf.convert_to_tensor(hr_image.shape[:-1]) // 4) * 4
-    hr_image = tf.image.crop_to_bounding_box(hr_image, 0, 0, hr_size[0], hr_size[1])
-    
-    hr_image = tf.cast(hr_image, tf.float32)
-    return tf.expand_dims(hr_image, 0)  
+    elif isinstance(image, torch.Tensor):  # If the image is already a tensor
+        image = image.unsqueeze(0) if image.ndimension() == 3 else image
+
+    return image
 
 def save_image(image, filename, path):
-    if not isinstance(image, Image.Image):
-       
-        if image.ndim == 4:  
-            image = tf.squeeze(image, axis=0)
+    # If the image is a PyTorch tensor, convert to NumPy array
+    if isinstance(image, torch.Tensor):
+        image = image.cpu().detach().numpy()
 
-        image = tf.clip_by_value(image, 0, 255)  
-        
-        image = image.numpy()
-        
-        image = Image.fromarray(image.astype(np.uint8))
-    
-    image.save(f"{path}/{filename}.jpg")
-    print(f"Saved as {filename}.jpg")
+    # If the image is a NumPy array, process it to ensure it's in the correct format
+    if isinstance(image, np.ndarray):
+        # Clip the values to the range 0-255 and convert to uint8
+        image = np.clip(image, 0, 255).astype(np.uint8)
+
+        # If the image is grayscale (2D array), convert it to (height, width, 1)
+        if image.ndim == 2:
+            image = np.expand_dims(image, axis=-1)  # Convert to (height, width, 1)
+
+        # If the image has only one channel (grayscale with 1 channel), convert to RGB
+        if image.ndim == 3 and image.shape[-1] == 1:
+            image = np.repeat(image, 3, axis=-1)  # Convert to RGB (height, width, 3)
+
+        # Convert the NumPy array to a PIL Image
+        image = Image.fromarray(image)
+
+    # Now that we have a PIL Image, we can save it
+    image.save(f"{path}/{filename}.png", format="PNG")
+    print(f"Saved as {filename}.png")
+
+def conver_mask_numpy(image):
+    if isinstance(image, torch.Tensor):
+        image = image.squeeze(0)  # Remove batch dimension
+        image = image.permute(1, 2, 0).cpu().numpy()  # Move to CPU and convert to NumPy
+        image = (image * 255).astype(np.uint8)  # Convert to uint8
+
+    return image
+
+def convert_img_numpy(masked_image):
+    if isinstance(masked_image, torch.Tensor):
+        masked_image = masked_image.cpu().numpy()  # Move to CPU and convert to NumPy
+        masked_image = (masked_image * 255).astype(np.uint8)  # Convert to uint8
+    return masked_image
+
 
 def pad_to_square(image):
     # Get original dimensions

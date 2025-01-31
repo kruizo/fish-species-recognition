@@ -8,7 +8,7 @@ warnings.filterwarnings("ignore", category=DeprecationWarning)
 warnings.filterwarnings("ignore", category=FutureWarning)
 
 from flask import Blueprint, request, jsonify
-from backend.models.baseline_resnet50 import BASELINE_RESNET50
+from backend.models.baseline import BASELINE_RESNET50
 from backend.models.unet import UNET
 from backend.models.esrgan import ESRGAN
 
