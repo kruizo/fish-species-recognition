@@ -26,43 +26,51 @@ inputFile.addEventListener("change", handleFileUpload); // Handle file selection
 dropArea.addEventListener("dragover", (e) => e.preventDefault()); // Allow dragover
 dropArea.addEventListener("drop", handleDrop); // Handle file drop
 
-function handleFileUpload() {
+async function handleFileUpload() {
   if (inputFile.files.length > 0) {
     const file = inputFile.files[0];
     // Create a FormData object to send the image
     const formData = new FormData();
     formData.append("file", file);
 
-    fetch("/predict", {
-      method: "POST",
-      body: formData,
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.prediction) {
-          displayResult(data.prediction);
-          showContent("result");
-        } else {
-          alert("No prediction received.");
-        }
-      })
-      .catch((error) => {
-        console.error("Error:", error);
-        alert("Error uploading image.");
+    try {
+      const response = await fetch("/predict", {
+        method: "POST",
+        body: formData,
       });
+
+      const data = await response.json();
+      console.log(data);
+
+      // Check if the prediction and other fields are present in the response
+      if (data.baseline_prediction && data.proposed_prediction) {
+        displayResult(data);
+        showContent("result");
+      } else {
+        alert("No prediction received.");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      alert("Error uploading image.");
+    }
   } else {
     resetFileDisplay();
   }
 }
 
-function displayResult(prediction) {
+function displayResult(data) {
   const resultContainer = document.getElementById("result-container");
   resultContainer.innerHTML = `
-      <h3>Prediction: ${prediction}</h3>
-      <p>Confidence: ${prediction.confidence}</p>
-      <p>Prediction Time: ${prediction.prediction_time} seconds</p>
-      <img src="/static/results/${prediction.image}" alt="Predicted Image" />
-    `;
+    <h3>Baseline Prediction: ${data.baseline_prediction}</h3>
+    <p>Confidence: ${data.baseline_confidence}</p>
+    <p>Prediction Time: ${data.baseline_prediction_time} seconds</p>
+    <h3>Proposed Prediction: ${data.proposed_prediction}</h3>
+    <p>Confidence: ${data.proposed_confidence}</p>
+    <p>Prediction Time: ${data.proposed_prediction_time} seconds</p>
+    <h4>Masked Image:</h4>
+    <img src="data:image/png;base64,${data.image}" alt="Predicted Image" />
+    <img src="data:image/png;base64,${data.masked_image}" alt="Predicted Image" />
+  `;
 }
 
 function handleDrop(e) {
