@@ -1,1 +1,7 @@
-https://drive.google.com/drive/folders/1Tb-ONcCezSBdlzSquWLyAXADvflVmyO_
+https://drive.google.com/drive/folders/1j47f0ELix3b4pOJ9qSH9ek1KI0gZH0wA?usp=sharing
+
+Get:
+RRDB_PSNR_x4.pth
+torch_weights_proposedwithUNETb32notauglr001enhancedvallacc95testacc95traintime3m2sepoch5ratio70_20_10withBatchNormLOWOVERFIT.pth
+torch_weights_baselineb32notauglr001notenhancedvallacc86testacc80traintime3m_2ssepoch5ratio70_20_10epoch5.pth
+unet_model224.pth
