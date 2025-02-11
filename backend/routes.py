@@ -2,6 +2,7 @@ import base64
 from io import BytesIO
 import os
 import sys
+import time
 import warnings
 import numpy as np
 import torch
@@ -36,8 +37,6 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 @api.route("/predict", methods=["POST"])
 def predict_endpoint():
 
-
-
     if "file" not in request.files:
         return jsonify({"error": "No file uploaded"}), 400
 
@@ -50,11 +49,11 @@ def predict_endpoint():
     image = Image.open(file)
     # print('Image loaded...')
 
-    bpredicted_class, bconfidence, bprediction_time = BASELINE_RESNET50(device=device).predict(image)
+    bpredicted_class, bconfidence, bprediction_time, bprobabilities = BASELINE_RESNET50(device=device).predict(image)
 
 
     # print('Enhancing image...')
-    enhanced_image, time_taken = ESRGAN(device=device).predict(image)
+    enhanced_image, esrgan_time = ESRGAN(device=device).predict(image)
     # print('Image enhanced... TIME TAKEN: ', time_taken)
     # print('Image enhanced SHAPE:', enhanced_image.shape)
     # print(f"Saving Enhanced image: {filename}")
@@ -63,7 +62,7 @@ def predict_endpoint():
     # print(f"Image saved: {filename}")
     
     # print('Masking image...')
-    binary_mask = UNET(device=device).predict(enhanced_image)
+    binary_mask, unet_time = UNET(device=device).predict(enhanced_image)
     # print('Image masked...')
     
     # print('Mask SHAPE:', binary_mask.shape)
@@ -81,25 +80,36 @@ def predict_endpoint():
     # print(f"Image saved: {filename}")
     
     # print("Classifying the image...")
-    predicted_class, confidence, prediction_time = PROPOSED_RESNET50(device=device).predict(masked_image)
-    print(f"BASELINE Prediction: {class_labels[bpredicted_class]} | Confidence: {bconfidence:.2f} | Prediction Time: {bprediction_time:.3f}s")
-    print(f"PROPOSED Prediction: {class_labels[predicted_class]} | Confidence: {confidence:.2f} | Prediction Time: {prediction_time:.3f}s")
+    predicted_class, confidence, prediction_time, probabilities = PROPOSED_RESNET50(device=device).predict(masked_image)
 
+
+    total_time = prediction_time + esrgan_time + unet_time
+
+    print(f"BASELINE Prediction: {class_labels[bpredicted_class]} | Confidence: {bconfidence:.2f} | Prediction Time: {bprediction_time:.3f}s")
+    print(f"PROPOSED Prediction: {class_labels[predicted_class]} | Confidence: {confidence:.2f} | Prediction Time: {prediction_time:.3f}s | ESRGAN Time: {esrgan_time:.3f} | UNET Time: {unet_time:.3f} | Total Time: {total_time:.3f}" )
     print("=====================================================================================")
 
     buffered = BytesIO()
     Image.fromarray(masked_image).save(buffered, format="PNG")
     img_str = base64.b64encode(buffered.getvalue()).decode('utf-8')
 
+    original_buffered = BytesIO()
+    image.save(original_buffered, format="PNG")
+    original_img_str = base64.b64encode(original_buffered.getvalue()).decode('utf-8')
+
     
     return jsonify({
+        "original_image": original_img_str,
+        "masked_image": img_str,
+        "class_labels": class_labels,
         "baseline_prediction": class_labels[bpredicted_class],
         "baseline_confidence": bconfidence,
         "baseline_prediction_time": bprediction_time,
+        "baseline_probabilities" : bprobabilities.tolist(),
         "proposed_prediction": class_labels[predicted_class],
         "proposed_confidence": confidence,
-        "proposed_prediction_time": prediction_time,
-        "masked_image": img_str
+        "proposed_prediction_time": total_time,
+        "proposed_probabilities": probabilities.tolist(),
     }), 200
 
 def setup_routes(app):

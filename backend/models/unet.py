@@ -1,3 +1,4 @@
+import time
 import numpy as np
 import torch
 from backend.utils.helpers import preprocess_image_for_segment
@@ -12,6 +13,7 @@ class UNET:
 
     def predict(self, image):
         self.model.eval()
+        start = time.time()
         image = preprocess_image_for_segment(image).to(self.device)
 
         with torch.no_grad():
@@ -24,8 +26,9 @@ class UNET:
         # Ensure the output has a single channel (1, 224, 224)
         binary_mask = (predicted_mask > 0.3).astype(np.uint8)
 
+        time_taken = time.time() - start
 
 
-        return binary_mask
+        return binary_mask, time_taken
 
 

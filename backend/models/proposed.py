@@ -43,12 +43,13 @@ class PROPOSED_RESNET50:
         with torch.no_grad():
             self.model.eval()
             output = self.model(image)
-            probabilities = torch.nn.functional.softmax(output, dim=1)
-            predicted_class_index = probabilities.argmax(dim=1).item()
-            confidence = probabilities.max().item()
-            
+
+        probabilities = torch.nn.functional.softmax(output, dim=1)
+        predicted_class_index = probabilities.argmax(dim=1).item()
+        confidence = probabilities.max().item() 
+
         prediction_time = time.time() - start_time
 
-        return predicted_class_index, confidence, prediction_time
+        return predicted_class_index, confidence, prediction_time, probabilities[0].cpu().numpy()
         
 

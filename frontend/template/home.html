@@ -3,146 +3,264 @@
   <head>
     <link
       rel="stylesheet"
-      href="{{ url_for('static', filename='styles/general.css') }}"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
     />
     <link
       rel="stylesheet"
-      href="{{ url_for('static', filename='styles/header.css') }}"
+      href="{{ url_for('static', filename='styles/global.css') }}"
     />
-    <link
-      rel="stylesheet"
-      href="{{ url_for('static', filename='styles/main.css') }}"
-    />
+    <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
+    <style type="text/tailwindcss">
+      @theme {
+        --color-primary: #00080f;
+        --color-accent: #2b7fff;
+        --color-accent-light: #6eacda;
+        --color-secondary: #f5f5f5;
+        --text-dark: #9c9c9b;
+        --color-gray: #2b2b2b;
+      }
+    </style>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   </head>
+  <style>
+    html {
+      color: var(--color-secondary);
+    }
+    body {
+      margin: 0;
+      box-sizing: border-box;
+      padding: 0;
+      background-color: var(--color-primary);
+    }
+    .test {
+      border: 1px solid red;
+    }
+  </style>
   <body>
-    <header class="header">
-      <div class="left-section">
-        <img
-          class="logo"
-          src="{{ url_for('static', filename='icons/sample.svg') }}"
-          alt=""
-        />
-        <div class="title">FishID</div>
-      </div>
-      <div class="right-section">
-        <div onclick="showContent('home')">Home</div>
-        <div onclick="showContent('donate')">Donate</div>
-        <div onclick="showContent('about')">About Us</div>
-        <div onclick="showContent('how-to')">How to Use</div>
-        <div>
-          <button>Sign In</button>
+    <header class="w-full bg-[var(--color-primary)]">
+      <nav
+        class="flex max-w-screen-2xl font-thin mx-auto justify-between items-center p-4"
+      >
+        <div class="flex items-center">
+          <div class="text-2xl font-bold">
+            <stong class="">Fishify</stong
+            ><span class="text-[var(--color-accent)] scale-125">.</span>
+          </div>
         </div>
-      </div>
+        <div class="flex items-center gap-4">
+          <div
+            class="hover:cursor-pointer hover:text-white text-blue-400"
+            onclick="showContent('home')"
+          >
+            Home
+          </div>
+
+          <div
+            class="hover:cursor-pointer hover:text-blue-400"
+            onclick="showContent('about')"
+          >
+            About
+          </div>
+          <div
+            class="hover:cursor-pointer hover:text-blue-400"
+            onclick="showContent('about')"
+          >
+            Contact Us
+          </div>
+        </div>
+        <button
+          class="py-2 flex items-center transition-colors duration-300 font-bold justify-center gap-2 cursor-pointer border border-[var(--color-accent)] text-[var(--color-accent)] px-3 rounded-lg hover:bg-blue-400 hover:text-white"
+        >
+          <i class="fa fa-github" style="font-size: 25px"></i>
+          Github
+        </button>
+      </nav>
     </header>
 
-    <main>
-      <!-- Home Section -->
-      <section id="home" class="content-section">
-        <div class="home-section-1">
-          <p class="title">Fish Specie Classifier</p>
-          <p class="subtitle">
-            A classification model which can classify up to
-            <span class="subtitle-span">18</span> species!
-          </p>
+    <main class="max-w-screen-2xl mx-auto">
+      <section id="content-section">
+        <div id="content-wrapper" class="h-full w-full">
+          <!-- Home Section -->
+          <section id="upload-section">
+            <div class="mx-auto">
+              <div
+                class="pt-20 pb-5 flex flex-col items-center mx-auto w-full space-y-4"
+              >
+                <p class="font-extrabold text-4xl">Fish Specie Classifier</p>
+                <p>
+                  A classification model which can classify up to
+                  <span class="text-[var(--color-accent)]"
+                    ><strong>18</strong></span
+                  >
+                  species!
+                </p>
+              </div>
+            </div>
+
+            <div class="flex flex-col items-center py-10 space-y-6 group">
+              <div
+                class="relative max-w-screen-sm w-full h-[300px] p-1 rounded-xl bg-gradient-to-l from-[var(--color-accent-light)] to-blue-500 overflow-visible group"
+              >
+                <div
+                  class="absolute top-[30px] left-0 right-0 z-[-1] w-full h-full transform scale-80 blur-[25px] bg-gradient-to-l from-[var(--color-accent-light)] to-blue-500 transition-opacity duration-500 group-hover:opacity-0"
+                ></div>
+
+                <div
+                  class="flex flex-col justify-center items-center w-full h-full bg-[var(--color-primary)] rounded-lg group-hover:text-[var(--color-accent-light)] transition-colors duration-1000 space-y-4"
+                  id="drop-area"
+                >
+                  <form
+                    id="predict-form"
+                    enctype="multipart/form-data"
+                    class="flex flex-col items-center space-y-10"
+                  >
+                    <label
+                      for="input-file"
+                      class="cursor-pointer flex flex-col items-center space-y-10"
+                    >
+                      <i
+                        class="fa fa-upload text-[var(--color-accent)] transition-colors duration-300"
+                        style="font-size: 100px"
+                      ></i>
+                      <p class="text-[var(--text-dark)]">
+                        <strong>Drag</strong> or <strong>upload</strong> an
+                        image file
+                      </p>
+                    </label>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      id="input-file"
+                      hidden
+                    />
+                    <button
+                      type="button"
+                      id="upload-btn"
+                      class="px-4 py-2 bg-[var(--color-accent)] text-white rounded-md hover:bg-[var(--color-accent-light)] cursor-pointer transition-colors duration-300"
+                    >
+                      Choose Image
+                    </button>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </section>
+          <!-- REsult Section-->
+          <section id="result-section" class="hidden">
+            <div class="mx-auto">
+              <div
+                class="pt-20 pb-5 flex flex-col items-center mx-auto w-full space-y-4"
+              >
+                <p class="italic text-[var(--text-dark)]">Specie Identified</p>
+                <p class="font-extrabold text-4xl proposed-pred"></p>
+                <p>
+                  We are
+                  <span class="text-[var(--color-accent)]"
+                    ><strong
+                      ><span class="proposed-conf"></span>% confident</strong
+                    ></span
+                  >
+                  that the fish is a <span class="proposed-pred"></span>!
+                </p>
+              </div>
+
+              <div
+                class="flex p-4 w-fit mx-auto gap-20 space-x-10 justify-between items-center"
+              >
+                <div class="card" id="baseline-card">
+                  <div
+                    class="w-full h-full flex flex-col justify-between px-5 py-4 z-20"
+                  >
+                    <h2 class="text-center font-extrabold pb-3">BASELINE</h2>
+                    <img src="" alt="" class="w-50 h-50 mx-auto" />
+                    <div class="mx-auto flex p-4 w-fit gap-4 items-center">
+                      <p><span class="baseline-speed font-bold"></span>ms</p>
+                      <p><span class="baseline-conf font-bold"></span>% AC</p>
+                    </div>
+                    <h1 class="text-center baseline-pred"></h1>
+                    <button
+                      type="button"
+                      id="baseline-show-graph"
+                      class="my-2 px-2 py-1 cursor-pointer text-sm w-full rounded-md text-[var(--color-accent)]"
+                    >
+                      Show Graph
+                    </button>
+                  </div>
+                </div>
+                <div class="card-plain" id="proposed-card">
+                  <div
+                    class="h-full w-full flex flex-col justify-between px-5 py-4 z-20"
+                  >
+                    <h2 class="text-center font-extrabold pb-3">PROPOSED</h2>
+                    <img src="" alt="" class="w-50 h-50 mx-auto" />
+                    <div class="mx-auto flex p-4 w-fit gap-4 items-center">
+                      <p><span class="proposed-speed font-bold"></span>ms</p>
+                      <p><span class="proposed-conf font-bold"></span>% AC</p>
+                    </div>
+                    <h1 class="text-center proposed-pred font-italic"></h1>
+                    <button
+                      type="button"
+                      id="proposed-show-graph"
+                      class="my-2 px-2 py-1 cursor-pointer text-sm w-full rounded-md text-[var(--color-accent)]"
+                    >
+                      Show Graph
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
         </div>
 
-        <div class="home-section-2">
-          <form id="predict-form" enctype="multipart/form-data">
-            <label for="input-file" id="drop-area">
-              <img
-                src="{{ url_for('static', filename='icons/upload.svg') }}"
-                alt=""
-              />
-              <p>Drag or upload an Image File</p>
-              <input type="file" accept="image/*" id="input-file" hidden />
-              <button type="button" id="choose-btn">Choose Image</button>
-            </label>
-          </form>
-        </div>
-      </section>
-      <!-- Donate Section -->
-      <section id="donate" class="content-section" style="display: none">
-        <h2>Donate</h2>
-        <p>Help us with donations.</p>
-      </section>
+        <!-- Progress Steps -->
+        <div class="flex justify-center items-center space-x-4 py-8">
+          <div class="flex flex-col justify-center items-center space-y-4">
+            <button
+              class="mx-auto cursor-pointer nav-btn w-10 h-10 flex items-center justify-center bg-[var(--color-accent)] text-white rounded-full hover:bg-[var(--color-accent-light)]"
+              data-target="home"
+            >
+              <h2 class="text-xs text-center">1</h2>
+            </button>
+            <p class="text-center text-sm text-[var(--color-accent)]">Upload</p>
+          </div>
 
-      <!-- About Us Section -->
-      <section id="about" class="content-section" style="display: none">
-        <h2>About Us</h2>
-        <p>This is the about us page.</p>
-      </section>
+          <div class="w-12 h-[0.05em] mb-6 bg-[var(--color-gray)]"></div>
 
-      <!-- How to Use Section -->
-      <section id="how-to" class="content-section" style="display: none">
-        <h2>How to Use</h2>
-        <p>Learn how to use FishID.</p>
-      </section>
+          <div class="flex flex-col justify-center items-center space-y-4">
+            <button
+              class="mx-auto cursor-pointer w-10 h-10 flex items-center justify-center bg-[var(--color-gray)] text-[var(--text-dark)] rounded-full hover:bg-[var(--color-accent-light)]"
+              data-target="classify"
+            >
+              <h2 class="text-xs text-center">2</h2>
+            </button>
+            <p class="text-center text-sm text-[var(--text-dark)]">Classify</p>
+          </div>
 
-      <!-- Result Section (New Section that will be shown after clicking "Choose Image") -->
-      <section id="result" class="content-section" style="display: none">
-        <div class="result-section-1">
-          <p>Fish Specie Classifier</p>
-          <input type="text" value="fish_000004210001_0019.jpg" readonly />
-          <div>
-            <button class="upload-btn">Upload New Image</button>
-            <button class="retry-btn">Retry</button>
+          <div class="w-12 h-[0.05em] mb-6 bg-[var(--color-gray)]"></div>
+
+          <div class="flex flex-col justify-center items-center space-y-4">
+            <button
+              class="mx-auto cursor-pointer nav-btn w-10 h-10 flex items-center justify-center bg-[var(--color-gray)] text-[var(--text-dark)] rounded-full hover:bg-[var(--color-accent-light)]"
+              data-target="save"
+            >
+              <h2 class="text-xs text-center">3</h2>
+            </button>
+            <p class="text-center text-sm text-[var(--text-dark)]">Save</p>
           </div>
         </div>
-
-        <div class="result-section-2">
-          <div class="left">
-            <p class="p1">Basline</p>
-            <p>Guessed in <spam class="span1">5</spam>ms</p>
-            <p class="p3">Barracuda</p>
-            <p class="p4">90% AC</p>
-          </div>
-          <div class="center">
-            <img
-              src="{{ url_for('static', filename='images/barracuda.jpg') }}"
-              alt=""
-            />
-            <p>Barracuda</p>
-          </div>
-          <div class="right">
-            <p class="p1">Optimized</p>
-            <p>Guessed in <span class="span1">2</span>ms</p>
-            <p class="p3">Barracuda</p>
-            <p class="p4">91% AC</p>
-          </div>
-        </div>
-
-        <div class="result-section-3" onclick="toggleAdditionalContent()">
-          <p>Scroll down for more details</p>
-          <img
-            src="{{ url_for('static', filename='icons/arrow_down.svg') }}"
-            alt=""
-          />
-        </div>
-
-        <!-- Additional content hidden initially -->
-        <div
-          class="result-section-3-scrolldown"
-          id="additional-content"
-          style="display: none"
-        >
-          <div id="result-container">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus
-            eu efficitur nibh. Aliquam nec eros tempor, sodales felis vitae,
-            imperdiet odio. Morbi pellentesque, nunc ac mattis varius, odio
-            nulla suscipit ipsum, in ullamcorper dui quam id eros. Lorem ipsum
-            dolor sit amet, consectetur adipiscing elit. Curabitur condimentum
-            posuere felis eu dapibus. Ut suscipit congue accumsan. Curabitur ut
-            velit leo.
-          </div>
-        </div>
-
-        <div class="result-section-4">
-          <h3>Top 5 Match Species</h3>
-          <canvas id="topSpeciesChart"></canvas>
-        </div>
       </section>
+      <div
+        class="h-[90vh] bg-[var(--color-primary)] w-full flex flex-col hidden justify-center items-center z-50"
+        id="loader"
+      >
+        <div class="loading">
+          <span></span><span></span><span></span><span></span><span></span>
+        </div>
+        <h1 class="font-thin">Classifying...</h1>
+      </div>
     </main>
+
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>
   </body>
 </html>
