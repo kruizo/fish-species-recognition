@@ -13,6 +13,7 @@
   width: 100px;
   gap: 6px;
   height: 100px;
+  color: #e6e6e6;
 }
 
 .loading span {
@@ -124,3 +125,21 @@
     background-image: linear-gradient(180deg, rgb(81, 255, 0), purple);
     animation: rotBGimg 3.5s linear infinite;
   } */
+
+.progress-indicator .progress-btn {
+  background-color: var(--color-gray);
+  color: var(--text-dark);
+}
+
+.progress-indicator.active .progress-btn {
+  background-color: var(--color-accent);
+  color: white;
+}
+
+.progress-indicator.active p {
+  color: var(--color-accent);
+}
+
+.progress-indicator p {
+  color: var(--text-dark);
+}

@@ -1,329 +1,382 @@
 document.addEventListener("DOMContentLoaded", function () {
-  const dropArea = document.getElementById("drop-area");
+  const sections = {
+    upload: {
+      element: document.getElementById("upload-section"),
+      progress: 1,
+      active: true,
+    },
+    results: {
+      element: document.getElementById("result-section"),
+      progress: 2,
+      active: false,
+    },
+    save: {
+      element: document.getElementById("save-section"),
+      progress: 3,
+      active: false,
+    },
+  };
+
+  let currentSection = "upload";
+  let currentChart = null;
+  let currentData = null;
+
+  const progressButtons = document.querySelectorAll(".progress-btn");
   const fileInput = document.getElementById("input-file");
   const uploadButton = document.getElementById("upload-btn");
   const loader = document.getElementById("loader");
   const contentSection = document.getElementById("content-section");
-  const uploadSection = document.getElementById("upload-section");
-  const resultSection = document.getElementById("result-section");
+
   uploadButton.addEventListener("click", () => fileInput.click());
   fileInput.addEventListener("change", handleFileUpload);
-  dropArea.addEventListener("dragover", (e) => e.preventDefault());
-  dropArea.addEventListener("drop", handleDrop);
 
-  function handleDrop(e) {
-    e.preventDefault();
-    fileInput.files = e.dataTransfer.files;
-    handleFileUpload();
+  init();
+
+  function init() {
+    updateProgress(1);
+  }
+
+  progressButtons.forEach((button) => {
+    button.addEventListener("click", async () => {
+      const sectionId = button.getAttribute("data-section");
+
+      if (!currentData) {
+        Swal.fire({
+          title: "No Image Uploaded",
+          text: "Upload an image first to proceed.",
+          icon: "warning",
+          showCancelButton: true,
+          showConfirmButton: false,
+          cancelButtonText: '<span style="color: white;">Go back</span>',
+          cancelButtonColor: "var(--color-accent)",
+        });
+        return;
+      }
+
+      if (sectionId === "upload" && sections.results.active) {
+        const result = await Swal.fire({
+          title: "Discard Progress?",
+          text: "Are you sure you want to go back? Your results will be discarded.",
+          icon: "warning",
+          showCancelButton: true,
+          confirmButtonText:
+            '<span style="color: #cc2020;">Yes, go back</span>',
+          confirmButtonColor: "#FFFFFF",
+          cancelButtonText: '<span style="color: white;">Cancel</span>',
+          cancelButtonColor: "var(--color-accent)",
+        });
+
+        if (!result.isConfirmed) return;
+
+        sections.results.active = false;
+      }
+
+      if (sectionId !== currentSection) {
+        updateProgress(sections[sectionId].progress);
+      }
+    });
+  });
+
+  function updateProgress(step) {
+    // STEP 0 = LOADING
+
+    if (step === 0) {
+      setTimeout(() => {
+        toggleVisibility(loader, true);
+        toggleVisibility(contentSection, false);
+      }, 200);
+      return;
+    }
+
+    toggleVisibility(loader, false);
+    toggleVisibility(contentSection, true);
+
+    if (step === 1) {
+      currentData = null;
+    }
+
+    currentSection = Object.keys(sections).find(
+      (key) => sections[key].progress === step
+    );
+
+    // UPDATE SECTION ACTIVE STATE
+    Object.values(sections).forEach((section) => {
+      if (section.progress <= step) {
+        section.active = true; // Retain active state for current and previous sections
+      } else {
+        section.active = false;
+      }
+      // Toggle visibility only for the current section
+      toggleVisibility(section.element, section.progress === step);
+    });
+
+    console.log("Section State:", sections);
+
+    highlightProgress();
   }
 
   async function handleFileUpload() {
     if (fileInput.files.length > 0) {
-      toggleVisibility(loader, true, "flex");
-
       const file = fileInput.files[0];
       const formData = new FormData();
       formData.append("file", file);
 
       try {
-        toggleVisibility(contentSection, false);
+        updateProgress(0);
 
         const response = await fetch("/predict", {
           method: "POST",
           body: formData,
         });
 
-        const data = await response.json();
-        console.log(data);
+        currentData = await response.json();
 
-        if (data.baseline_prediction && data.proposed_prediction) {
-          displayResult(data);
-          toggleVisibility(contentSection, true);
-          toggleVisibility(uploadSection, false);
-          toggleVisibility(resultSection, true);
-          toggleVisibility(loader, false);
-        } else {
-          alert("No prediction received.");
+        if (!currentData) {
+          Swal.fire("Error", "Failed to process the file.", "error");
+          resetFileDisplay();
+          return;
         }
+
+        displayResult();
+        updateProgress(2);
       } catch (error) {
         console.error("Error:", error);
-        alert("Error uploading image.");
+        Swal.fire("Error", "An error occurred while uploading.", "error");
+        updateProgress(1);
       }
     } else {
-      resetFileDisplay();
+      updateProgress(1);
     }
   }
 
-  function toggleVisibility(element, show, display = "block") {
-    element.style.display = show ? display : "none";
+  function highlightProgress() {
+    progressButtons.forEach((button) => {
+      const sectionId = button.getAttribute("data-section");
+      const section = sections[sectionId];
+
+      // Update button styles based on active state
+      if (section.active) {
+        button.classList.add("bg-[var(--color-accent)]", "text-white");
+        button.classList.remove(
+          "bg-[var(--color-gray)]",
+          "text-[var(--color-secondary)]"
+        );
+      } else {
+        button.classList.remove("bg-[var(--color-accent)]", "text-white");
+        button.classList.add(
+          "bg-[var(--color-gray)]",
+          "text-[var(--color-secondary)]"
+        );
+      }
+    });
+
+    Object.keys(sections).forEach((key) => {
+      const section = sections[key];
+      const button = Array.from(progressButtons).find(
+        (btn) => btn.getAttribute("data-section") === key
+      );
+      const indicator = button.closest(".progress-indicator");
+      const prevLine = indicator.previousElementSibling;
+
+      // Ensure the active class is added first
+      if (section.active) {
+        indicator.classList.add("active");
+      } else {
+        indicator.classList.remove("active");
+      }
+
+      // Highlight the previous line for all completed sections
+      if (prevLine) {
+        if (section.progress <= sections[currentSection].progress) {
+          prevLine.style.backgroundColor = "var(--color-accent)";
+        } else {
+          prevLine.style.backgroundColor = "var(--color-gray)";
+        }
+      }
+    });
   }
 
-  function displayResult(data) {
+  function toggleVisibility(element, show, displayClass = "block") {
+    element.classList.toggle("hidden", !show);
+    element.classList.toggle(displayClass, show);
+  }
+
+  function displayResult() {
     document.querySelector("#result-section").classList.remove("hidden");
 
     // Proposed
     document
       .querySelectorAll(".proposed-pred")
-      .forEach((el) => (el.textContent = data.proposed_prediction));
+      .forEach((el) => (el.textContent = currentData.proposed_prediction));
     // Proposed
     document.querySelectorAll(".proposed-conf").forEach((el) => {
-      el.textContent = `${(data.proposed_confidence * 100).toFixed(2)}`;
+      el.textContent = `${(currentData.proposed_confidence * 100).toFixed(2)}`;
     });
     document.querySelectorAll(".proposed-speed").forEach((el) => {
-      el.textContent = `${data.proposed_prediction_time.toFixed(2)}`;
+      el.textContent = `${currentData.proposed_prediction_time.toFixed(2)}`;
     });
 
     // Baseline
     document.querySelectorAll(".baseline-pred").forEach((el) => {
-      el.textContent = data.baseline_prediction;
+      el.textContent = currentData.baseline_prediction;
     });
     document.querySelectorAll(".baseline-speed").forEach((el) => {
-      el.textContent = `${data.baseline_prediction_time.toFixed(2)}`;
+      el.textContent = `${currentData.baseline_prediction_time.toFixed(2)}`;
     });
     document.querySelectorAll(".baseline-conf").forEach((el) => {
-      el.textContent = `${(data.baseline_confidence * 100).toFixed(2)}`;
+      el.textContent = `${(currentData.baseline_confidence * 100).toFixed(2)}`;
     });
 
     // Set images
     const baselineImg = document.querySelector("#baseline-card img");
     const proposedImg = document.querySelector("#proposed-card img");
 
-    baselineImg.src = `data:image/png;base64,${data.original_image}`;
-    proposedImg.src = `data:image/png;base64,${data.masked_image}`;
+    baselineImg.src = `data:image/png;base64,${currentData.original_image}`;
+    proposedImg.src = `data:image/png;base64,${currentData.masked_image}`;
 
     // Set card by highest
-    const baselineConfidence = data.baseline_confidence * 100;
-    const proposedConfidence = data.proposed_confidence * 100;
+    const baselineConfidence = currentData.baseline_confidence * 100;
+    const proposedConfidence = currentData.proposed_confidence * 100;
     const baselineCard = document.getElementById("baseline-card");
     const proposedCard = document.getElementById("proposed-card");
 
     if (baselineConfidence >= proposedConfidence) {
       baselineCard.className = "card";
       proposedCard.className = "card-plain";
-      proposedCard.querySelectorAll("p span").forEach((el) => {
-        el.classList.add("text-red-400");
-      });
-      baselineCard.querySelectorAll("p span").forEach((el) => {
-        el.classList.add("text-green-400");
-      });
     } else {
       baselineCard.className = "card-plain";
       proposedCard.className = "card";
-      proposedCard.querySelectorAll("p span").forEach((el) => {
-        el.classList.add("text-green-400");
-      });
-      baselineCard.querySelectorAll("p span").forEach((el) => {
-        el.classList.add("text-red-400");
-      });
     }
+
+    const proposedGraphListener = function () {
+      init_swal(currentData.proposed_probabilities, currentData.class_labels);
+    };
+    const baselineGraphListener = function () {
+      init_swal(currentData.baseline_probabilities, currentData.class_labels);
+    };
 
     document
       .getElementById("proposed-show-graph")
-      .addEventListener("click", function () {
-        const classLabels = Object.keys(data.proposed_probabilities);
-        const proposedProbabilities = Object.values(
-          data.proposed_probabilities
-        );
+      .removeEventListener("click", proposedGraphListener);
+    document
+      .getElementById("baseline-show-graph")
+      .removeEventListener("click", baselineGraphListener);
 
-        const classLegend = data["class_labels"];
+    document
+      .getElementById("proposed-show-graph")
+      .addEventListener("click", proposedGraphListener);
+    document
+      .getElementById("baseline-show-graph")
+      .addEventListener("click", baselineGraphListener);
+  }
+  function init_swal(probabilities, class_labels) {
+    const classLabels = Object.keys(probabilities);
+    const class_probabilities = Object.values(probabilities);
 
-        let canvas = document.createElement("canvas");
-        canvas.id = "chartCanvas";
+    const classLegend = class_labels;
 
-        const legendDiv = document.createElement("div");
-        legendDiv.id = "legendDiv";
-        legendDiv.style.marginTop = "20px";
-        legendDiv.style.display = "grid";
-        legendDiv.style.gridTemplateColumns =
-          "repeat(auto-fill, minmax(150px, 1fr))";
-        legendDiv.style.gap = "10px";
-        legendDiv.style.fontSize = "12px";
-        legendDiv.innerHTML = classLegend
-          .map(
-            (label, index) =>
-              `<div style="text-align: start;"><strong>${index}:</strong> ${label}</div>`
-          )
-          .join("");
+    let canvas = document.createElement("canvas");
+    canvas.id = "chartCanvas";
 
-        Swal.fire({
-          title: "Class Probabilities",
-          html: `${canvas.outerHTML}${legendDiv.outerHTML}`,
-          showConfirmButton: true,
-          showCancelButton: true,
-          confirmButtonText: '<span style="color: white;">Print</span>',
-          confirmButtonColor: "#007bff", // Blue color for Print button
-          cancelButtonText: "Close",
-          width: 800,
-          didOpen: () => {
-            const ctx = document.getElementById("chartCanvas").getContext("2d");
-            canvas = ctx;
-            new Chart(ctx, {
-              type: "bar",
-              data: {
-                labels: classLabels,
-                datasets: [
-                  {
-                    label: "Probability (%)",
-                    data: proposedProbabilities.map((p) =>
-                      (p * 100).toFixed(2)
-                    ),
-                    backgroundColor: "rgba(75, 192, 192, 0.6)",
-                    borderColor: "rgba(75, 192, 192, 1)",
-                    borderWidth: 1,
-                  },
-                ],
+    const legendDiv = document.createElement("div");
+    legendDiv.id = "legendDiv";
+    legendDiv.style.marginTop = "20px";
+    legendDiv.style.display = "grid";
+    legendDiv.style.gridTemplateColumns =
+      "repeat(auto-fill, minmax(150px, 1fr))";
+    legendDiv.style.gap = "10px";
+    legendDiv.style.fontSize = "12px";
+    legendDiv.innerHTML = classLegend
+      .map(
+        (label, index) =>
+          `<div style="text-align: start;"><strong>${index}:</strong> ${label}</div>`
+      )
+      .join("");
+
+    Swal.fire({
+      title: "Class Probabilities",
+      html: `${canvas.outerHTML}${legendDiv.outerHTML}`,
+      showConfirmButton: true,
+      showCancelButton: true,
+      confirmButtonText: '<span style="color: white;">Print</span>',
+      confirmButtonColor: "#007bff",
+      cancelButtonText: "Close",
+      width: 800,
+      didOpen: () => {
+        const ctx = document.getElementById("chartCanvas").getContext("2d");
+
+        if (currentChart) {
+          currentChart.destroy();
+        }
+
+        currentChart = new Chart(ctx, {
+          type: "bar",
+          data: {
+            labels: classLabels,
+            datasets: [
+              {
+                label: "Probability (%)",
+                data: class_probabilities.map((p) => (p * 100).toFixed(2)),
+                backgroundColor: "rgba(75, 192, 192, 0.6)",
+                borderColor: "rgba(75, 192, 192, 1)",
+                borderWidth: 1,
               },
-              options: {
-                responsive: true,
-                plugins: {
-                  legend: {
-                    display: true,
-                    position: "top",
-                  },
-                },
-                scales: {
-                  y: {
-                    beginAtZero: true,
-                    max: 100,
-                  },
-                },
-              },
-            });
+            ],
           },
-        }).then((result) => {
-          if (result.isConfirmed) {
-            // Open new window for printing
-            const printWindow = window.open(
-              "",
-              "PRINT",
-              "width=800,height=600"
-            );
-            printWindow.document.write(
-              "<html><head><title>Print Chart</title></head><body>"
-            );
-            printWindow.document.write("<h3>Class Probabilities</h3>");
-            printWindow.document.write(canvas.outerHTML); // Add the chart
-            printWindow.document.write(legendDiv.outerHTML); // Add the legend
-            printWindow.document.write("</body></html>");
-            printWindow.document.close();
-            printWindow.focus();
-            setTimeout(() => {
-              printWindow.print();
-              printWindow.close();
-            }, 500); // Delay to ensure content is loaded
-          }
+          options: {
+            responsive: true,
+            plugins: {
+              legend: {
+                display: true,
+                position: "top",
+              },
+            },
+            scales: {
+              y: {
+                beginAtZero: true,
+                max: 100,
+              },
+            },
+            animation: {
+              onComplete: () => {
+                // Convert the fully rendered canvas to an image
+                const imgData = ctx.canvas.toDataURL("image/png");
+                document
+                  .getElementById("chartCanvas")
+                  .setAttribute("data-img", imgData);
+              },
+            },
+          },
         });
-      });
+        const confirmButton = Swal.getConfirmButton();
+        confirmButton.disabled = true;
+
+        setTimeout(() => {
+          confirmButton.disabled = false;
+        }, 3000);
+      },
+    }).then((result) => {
+      if (result.isConfirmed) {
+        const imgData = document
+          .getElementById("chartCanvas")
+          .getAttribute("data-img");
+        const printWindow = window.open("", "PRINT", "width=800,height=600");
+        printWindow.document.write(
+          "<html><head><title>Print Chart</title></head><body>"
+        );
+        printWindow.document.write("<h3>Class Probabilities</h3>");
+        printWindow.document.write(
+          `<img src="${imgData}" style="width: 100%;"/><br>`
+        );
+        printWindow.document.write(legendDiv.outerHTML);
+        printWindow.document.write("</body></html>");
+        printWindow.document.close();
+        printWindow.focus();
+        setTimeout(() => {
+          printWindow.print();
+          printWindow.close();
+        }, 500);
+      }
+    });
   }
 });
-
-// document
-//   .getElementById("proposed-show-graph")
-//   .addEventListener("click", function () {
-//     const canvas = document.createElement("canvas");
-//     canvas.id = "chartCanvas";
-
-//     Swal.fire({
-//       title: "Class Probabilities",
-//       html: canvas.outerHTML,
-//       showConfirmButton: true,
-//       didOpen: () => {
-//         const ctx = document.getElementById("chartCanvas").getContext("2d");
-//         new Chart(ctx, {
-//           type: "bar",
-//           data: {
-//             labels: classLabels,
-//             datasets: [
-//               {
-//                 label: "Probability",
-//                 data: proposedProbabilities,
-//                 backgroundColor: "rgba(75, 192, 192, 0.6)",
-//                 borderColor: "rgba(75, 192, 192, 1)",
-//                 borderWidth: 1,
-//               },
-//             ],
-//           },
-//           options: {
-//             scales: {
-//               y: {
-//                 beginAtZero: true,
-//               },
-//             },
-//           },
-//         });
-//       },
-//     });
-//   });
-
-// document.addEventListener("DOMContentLoaded", function () {
-//   // Get the canvas element
-//   const ctx = document.getElementById("").getContext("2d");
-
-//   // Example data (replace this with your dynamic data)
-//   const speciesLabels = [
-//     "Species A",
-//     "Species B",
-//     "Species C",
-//     "Species D",
-//     "Species E",
-//   ];
-//   const matchScores = [100, 75, 65, 55, 50]; // Match percentages
-
-//   // Create the bar chart
-//   const topSpeciesChart = new Chart(ctx, {
-//     type: "bar",
-//     data: {
-//       labels: speciesLabels, // X-axis labels
-//       datasets: [
-//         {
-//           label: "Match Percentage (%)",
-//           data: matchScores, // Y-axis values
-//           backgroundColor: [
-//             "rgba(75, 192, 192, 0.6)",
-//             "rgba(54, 162, 235, 0.6)",
-//             "rgba(255, 206, 86, 0.6)",
-//             "rgba(255, 99, 132, 0.6)",
-//             "rgba(153, 102, 255, 0.6)",
-//           ],
-//           borderColor: [
-//             "rgba(75, 192, 192, 1)",
-//             "rgba(54, 162, 235, 1)",
-//             "rgba(255, 206, 86, 1)",
-//             "rgba(255, 99, 132, 1)",
-//             "rgba(153, 102, 255, 1)",
-//           ],
-//           borderWidth: 1,
-//           barThickness: 40,
-//           maxBarThickness: 60,
-//         },
-//       ],
-//     },
-//     options: {
-//       scales: {
-//         y: {
-//           beginAtZero: true,
-//           title: {
-//             display: true,
-//             text: "Match Percentage (%)",
-//           },
-//         },
-//         x: {
-//           title: {
-//             display: true,
-//             text: "Species",
-//           },
-//         },
-//       },
-//       responsive: true,
-//       plugins: {
-//         legend: {
-//           display: true,
-//           position: "top",
-//         },
-//         tooltip: {
-//           enabled: true,
-//         },
-//       },
-//     },
-//   });
-// });
