@@ -7,7 +7,7 @@ import tensorflow as tf
 
 class UNET:
     def __init__(self, model_path="backend/models/weights/unet_model224.pth", device='cpu'):
-        self.model = torch.load(model_path, weights_only=False)
+        self.model = torch.load(model_path, map_location=device,  weights_only=False)
         self.device = torch.device(device)
         self.model.to(device)
 

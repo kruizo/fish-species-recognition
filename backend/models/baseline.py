@@ -24,7 +24,7 @@ class BASELINE_RESNET50:
         self.model = models.resnet50(weights="IMAGENET1K_V1")
         self.device = torch.device(device)
         self.model = BaselineResNet(self.model).to(device)
-        self.model.load_state_dict(torch.load(model_path, weights_only=True))
+        self.model.load_state_dict(torch.load(model_path, map_location=device, weights_only=True))
 
     def predict(self, image):
         image = preprocess_image_for_classifier(image).to(self.device)
