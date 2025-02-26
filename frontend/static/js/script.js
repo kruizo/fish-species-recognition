@@ -20,6 +20,7 @@ document.addEventListener("DOMContentLoaded", function () {
   let currentSection = "upload";
   let currentChart = null;
   let currentData = null;
+  let tempData = null;
 
   const progressButtons = document.querySelectorAll(".progress-btn");
   const fileInput = document.getElementById("input-file");
@@ -122,7 +123,7 @@ document.addEventListener("DOMContentLoaded", function () {
       try {
         updateProgress(0);
 
-        const response = await fetch("/predict", {
+        let response = await fetch("/predict", {
           method: "POST",
           body: formData,
         });
@@ -135,8 +136,26 @@ document.addEventListener("DOMContentLoaded", function () {
           resetFileDisplay();
           return;
         }
+        const models = Object.entries(currentData.models);
+        const highlight = models.reduce((prev, curr) =>
+          prev[1].confidence >= curr[1].confidence ? prev : curr
+        )[0];
 
-        displayResult();
+        models.forEach(([modelName, modelData]) => {
+          displayResult(modelName, modelData, modelName === highlight);
+        });
+        document.querySelector("#result-section").classList.remove("hidden");
+
+        // response = await fetch(
+        //   "predict/model?q=vgg16&q=inceptionv3&q=densenet"
+        // );
+
+        // tempData = await response.json();
+
+        // if (!tempData) {
+        //   return;
+        // }
+
         updateProgress(2);
       } catch (error) {
         console.error("Error:", error);
@@ -198,91 +217,46 @@ document.addEventListener("DOMContentLoaded", function () {
     element.classList.toggle("hidden", !show);
     element.classList.toggle(displayClass, show);
   }
-
-  function displayResult() {
-    document.querySelector("#result-section").classList.remove("hidden");
-
-    // Proposed
+  function displayResult(name, data, highlight = false) {
+    console.log("Displaying Result:", data);
+    // Prediction
     document
-      .querySelectorAll(".proposed-pred")
-      .forEach(
-        (el) => (el.textContent = currentData.models.proposed.prediction)
-      );
-    // Proposed
-    document.querySelectorAll(".proposed-conf").forEach((el) => {
-      el.textContent = `${(
-        currentData.models.proposed.confidence * 100
-      ).toFixed(2)}`;
+      .querySelectorAll(`.${name}-pred`)
+      .forEach((el) => (el.textContent = data.prediction));
+    // Confidence
+    document.querySelectorAll(`.${name}-conf`).forEach((el) => {
+      el.textContent = `${(data.confidence * 100).toFixed(2)}`;
     });
-    document.querySelectorAll(".proposed-speed").forEach((el) => {
-      el.textContent = `${currentData.models.proposed.prediction_time.toFixed(
-        2
-      )}`;
-    });
-
-    // Baseline
-    document.querySelectorAll(".baseline-pred").forEach((el) => {
-      el.textContent = currentData.models.baseline.prediction;
-    });
-    document.querySelectorAll(".baseline-speed").forEach((el) => {
-      el.textContent = `${currentData.models.baseline.prediction_time.toFixed(
-        2
-      )}`;
-    });
-    document.querySelectorAll(".baseline-conf").forEach((el) => {
-      el.textContent = `${(
-        currentData.models.baseline.confidence * 100
-      ).toFixed(2)}`;
+    // Prediction Time
+    document.querySelectorAll(`.${name}-speed`).forEach((el) => {
+      el.textContent = `${data.prediction_time.toFixed(2)}`;
     });
 
     // Set images
-    const baselineImg = document.querySelector("#baseline-card img");
-    const proposedImg = document.querySelector("#proposed-card img");
+    const modelImg = document.querySelector(`#${name}-card img`);
+    modelImg.src = data.image;
 
-    baselineImg.src = `data:image/png;base64,${currentData.original_image}`;
-    proposedImg.src = `data:image/png;base64,${currentData.masked_image}`;
-
-    // Set card by highest
-    const baselineConfidence = currentData.models.baseline.confidence * 100;
-    const proposedConfidence = currentData.models.proposed.confidence * 100;
-    const baselineCard = document.getElementById("baseline-card");
-    const proposedCard = document.getElementById("proposed-card");
-
-    if (baselineConfidence >= proposedConfidence) {
-      baselineCard.className = "card";
-      proposedCard.className = "card-plain";
+    // Set card by highest confidence
+    const modelCard = document.getElementById(`${name}-card`);
+    if (highlight) {
+      modelCard.className = "card";
     } else {
-      baselineCard.className = "card-plain";
-      proposedCard.className = "card";
+      modelCard.className = "card-plain";
     }
 
-    const proposedGraphListener = function () {
-      init_swal(
-        currentData.models.proposed.probabilities,
-        currentData.class_labels
-      );
-    };
-    const baselineGraphListener = function () {
-      init_swal(
-        currentData.models.baseline.probabilities,
-        currentData.class_labels
-      );
+    const graphListener = function () {
+      init_swal(data.probabilities, currentData.class_labels);
     };
 
     document
-      .getElementById("proposed-show-graph")
-      .removeEventListener("click", proposedGraphListener);
-    document
-      .getElementById("baseline-show-graph")
-      .removeEventListener("click", baselineGraphListener);
+      .getElementById(`${name}-show-graph`)
+      .removeEventListener("click", graphListener);
 
     document
-      .getElementById("proposed-show-graph")
-      .addEventListener("click", proposedGraphListener);
-    document
-      .getElementById("baseline-show-graph")
-      .addEventListener("click", baselineGraphListener);
+      .getElementById(`${name}-show-graph`)
+      .addEventListener("click", graphListener);
   }
+
   function init_swal(probabilities, class_labels) {
     const classLabels = Object.keys(probabilities);
     const class_probabilities = Object.values(probabilities);

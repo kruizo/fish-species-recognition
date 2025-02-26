@@ -95,6 +95,7 @@ def predict_model_endpoint():
     
 
 
+
     return jsonify(response_body, 200)
 
 
@@ -160,14 +161,14 @@ def predict_endpoint():
     buffered = BytesIO()
     Image.fromarray(masked_image).save(buffered, format="PNG")
     img_str = base64.b64encode(buffered.getvalue()).decode('utf-8')
+    img_str = f"data:image/png;base64,{img_str}"
 
     original_buffered = BytesIO()
     image.save(original_buffered, format="PNG")
     original_img_str = base64.b64encode(original_buffered.getvalue()).decode('utf-8')
+    original_img_str = f"data:image/png;base64,{original_img_str}"
 
     return jsonify({
-        "original_image": original_img_str,
-        "masked_image": img_str,    
         "class_labels": class_labels,
         "models" : {
             'baseline' : {
@@ -175,12 +176,14 @@ def predict_endpoint():
                 "confidence": bconfidence,
                 "prediction_time": bprediction_time,
                 "probabilities" : bprobabilities.tolist(),
+                "image" : original_img_str
                 },
             'proposed' : {
                 "prediction": class_labels[predicted_class],
                 "confidence": confidence,
                 "prediction_time": total_time,
                 "probabilities": probabilities.tolist(),
+                "image" : img_str
             }
         }
     }), 200
