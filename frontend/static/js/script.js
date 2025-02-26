@@ -35,7 +35,6 @@ document.addEventListener("DOMContentLoaded", function () {
   function init() {
     updateProgress(1);
   }
-
   progressButtons.forEach((button) => {
     button.addEventListener("click", async () => {
       const sectionId = button.getAttribute("data-section");
@@ -102,11 +101,10 @@ document.addEventListener("DOMContentLoaded", function () {
     // UPDATE SECTION ACTIVE STATE
     Object.values(sections).forEach((section) => {
       if (section.progress <= step) {
-        section.active = true; // Retain active state for current and previous sections
+        section.active = true;
       } else {
         section.active = false;
       }
-      // Toggle visibility only for the current section
       toggleVisibility(section.element, section.progress === step);
     });
 
@@ -130,6 +128,7 @@ document.addEventListener("DOMContentLoaded", function () {
         });
 
         currentData = await response.json();
+        console.log("Response:", currentData);
 
         if (!currentData) {
           Swal.fire("Error", "Failed to process the file.", "error");
@@ -154,7 +153,6 @@ document.addEventListener("DOMContentLoaded", function () {
       const sectionId = button.getAttribute("data-section");
       const section = sections[sectionId];
 
-      // Update button styles based on active state
       if (section.active) {
         button.classList.add("bg-[var(--color-accent)]", "text-white");
         button.classList.remove(
@@ -207,24 +205,34 @@ document.addEventListener("DOMContentLoaded", function () {
     // Proposed
     document
       .querySelectorAll(".proposed-pred")
-      .forEach((el) => (el.textContent = currentData.proposed_prediction));
+      .forEach(
+        (el) => (el.textContent = currentData.models.proposed.prediction)
+      );
     // Proposed
     document.querySelectorAll(".proposed-conf").forEach((el) => {
-      el.textContent = `${(currentData.proposed_confidence * 100).toFixed(2)}`;
+      el.textContent = `${(
+        currentData.models.proposed.confidence * 100
+      ).toFixed(2)}`;
     });
     document.querySelectorAll(".proposed-speed").forEach((el) => {
-      el.textContent = `${currentData.proposed_prediction_time.toFixed(2)}`;
+      el.textContent = `${currentData.models.proposed.prediction_time.toFixed(
+        2
+      )}`;
     });
 
     // Baseline
     document.querySelectorAll(".baseline-pred").forEach((el) => {
-      el.textContent = currentData.baseline_prediction;
+      el.textContent = currentData.models.baseline.prediction;
     });
     document.querySelectorAll(".baseline-speed").forEach((el) => {
-      el.textContent = `${currentData.baseline_prediction_time.toFixed(2)}`;
+      el.textContent = `${currentData.models.baseline.prediction_time.toFixed(
+        2
+      )}`;
     });
     document.querySelectorAll(".baseline-conf").forEach((el) => {
-      el.textContent = `${(currentData.baseline_confidence * 100).toFixed(2)}`;
+      el.textContent = `${(
+        currentData.models.baseline.confidence * 100
+      ).toFixed(2)}`;
     });
 
     // Set images
@@ -235,8 +243,8 @@ document.addEventListener("DOMContentLoaded", function () {
     proposedImg.src = `data:image/png;base64,${currentData.masked_image}`;
 
     // Set card by highest
-    const baselineConfidence = currentData.baseline_confidence * 100;
-    const proposedConfidence = currentData.proposed_confidence * 100;
+    const baselineConfidence = currentData.models.baseline.confidence * 100;
+    const proposedConfidence = currentData.models.proposed.confidence * 100;
     const baselineCard = document.getElementById("baseline-card");
     const proposedCard = document.getElementById("proposed-card");
 
@@ -249,10 +257,16 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     const proposedGraphListener = function () {
-      init_swal(currentData.proposed_probabilities, currentData.class_labels);
+      init_swal(
+        currentData.models.proposed.probabilities,
+        currentData.class_labels
+      );
     };
     const baselineGraphListener = function () {
-      init_swal(currentData.baseline_probabilities, currentData.class_labels);
+      init_swal(
+        currentData.models.baseline.probabilities,
+        currentData.class_labels
+      );
     };
 
     document

@@ -216,7 +216,91 @@
             </div>
           </section>
 
-          <section id="save-section" class="hidden"></section>
+          <section id="save-section" class="hidden">
+            <div class="mx-auto">
+              <div
+                class="pt-20 pb-5 flex flex-col items-center mx-auto w-full space-y-4"
+              >
+                <p class="italic text-[var(--text-dark)]">Specie Identified</p>
+                <p class="font-extrabold text-4xl text-white">
+                  Heres what other models think.
+                </p>
+                <p>Classified using VGG16, Inceptionv3, and DenseNet.</p>
+              </div>
+
+              <div
+                class="flex p-4 w-fit mx-auto gap-20 space-x-10 justify-between items-center"
+              >
+                <div class="card" id="baseline-card">
+                  <div
+                    class="w-full h-full flex flex-col justify-between px-5 py-4 z-20"
+                  >
+                    <h2 class="text-center font-thin pb-3">VGG</h2>
+                    <img src="" alt="" class="w-50 h-50 mx-auto" />
+                    <div class="mx-auto flex p-4 w-fit gap-4 items-center">
+                      <p><span class="baseline-speed font-bold"></span>ms</p>
+                      <p><span class="baseline-conf font-bold"></span>% AC</p>
+                    </div>
+                    <h1
+                      class="text-center baseline-pred font-semibold italic"
+                    ></h1>
+                    <button
+                      type="button"
+                      id="baseline-show-graph"
+                      class="my-2 px-2 py-1 cursor-pointer text-sm w-full rounded-md text-[var(--color-accent)] hover:underline"
+                    >
+                      Show Graph
+                    </button>
+                  </div>
+                </div>
+                <div class="card" id="proposed-card">
+                  <div
+                    class="h-full w-full flex flex-col justify-between px-5 py-4 z-20"
+                  >
+                    <h2 class="text-center font-thin pb-3">Inceptionv3</h2>
+                    <img src="" alt="" class="w-50 h-50 mx-auto" />
+                    <div class="mx-auto flex p-4 w-fit gap-4 items-center">
+                      <p><span class="proposed-speed font-bold"></span>ms</p>
+                      <p><span class="proposed-conf font-bold"></span>% AC</p>
+                    </div>
+                    <h1
+                      class="text-center proposed-pred font-semibold italic"
+                    ></h1>
+                    <button
+                      type="button"
+                      id="proposed-show-graph"
+                      class="my-2 px-2 py-1 cursor-pointer text-sm w-full rounded-md text-[var(--color-accent)] hover:underline"
+                    >
+                      Show Graph
+                    </button>
+                  </div>
+                </div>
+                <div class="card" id="proposed-card">
+                  <div
+                    class="h-full w-full flex flex-col justify-between px-5 py-4 z-20"
+                  >
+                    <h2 class="text-center font-thin pb-3">DenseNet</h2>
+                    <img src="" alt="" class="w-50 h-50 mx-auto" />
+                    <div class="mx-auto flex p-4 w-fit gap-4 items-center">
+                      <p><span class="proposed-speed font-bold"></span>ms</p>
+                      <p><span class="proposed-conf font-bold"></span>% AC</p>
+                    </div>
+                    <h1
+                      class="text-center proposed-pred font-semibold italic"
+                    ></h1>
+                    <button
+                      type="button"
+                      id="proposed-show-graph"
+                      class="my-2 px-2 py-1 cursor-pointer text-sm w-full rounded-md text-[var(--color-accent)] hover:underline"
+                    >
+                      Show Graph
+                    </button>
+                  </div>
+                </div>
+                sz
+              </div>
+            </div>
+          </section>
         </div>
 
         <!-- Progress Indicators -->
@@ -267,7 +351,7 @@
             >
               <h2 class="text-xs text-center">3</h2>
             </button>
-            <p class="text-center text-sm text-[var(--text-dark)]">Save</p>
+            <p class="text-center text-sm text-[var(--text-dark)]">Verify</p>
           </div>
         </div>
       </section>

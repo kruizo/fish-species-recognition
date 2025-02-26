@@ -20,6 +20,7 @@ from backend.models.esrgan import ESRGAN
 from backend.utils.helpers import convert_img_numpy, conver_mask_numpy, save_image, save_image_as_png
 
 from PIL import Image, ImageFile
+# from backend.models.vgg import VGG
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 
 
@@ -34,6 +35,69 @@ class_labels = [
 ]
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
+@api.route('/predict/model', methods=['POST'])
+def predict_model_endpoint():
+
+    if "file" not in request.files:
+        return jsonify({"error": "No file uploaded"}), 400
+
+    file = request.files["file"]
+
+    if not file:
+        return jsonify({"error": "No file to be processed"}), 400
+    
+
+    print('Image:', file)
+    image = Image.open(file)
+
+    query = request.args.get['q']
+    print('model Params:', query)
+
+    
+    original_buffered = BytesIO()
+    image.save(original_buffered, format="PNG")
+    original_img_str = base64.b64encode(original_buffered.getvalue()).decode('utf-8')
+
+
+    response_body = {
+        "original_image": original_img_str,
+        "class_labels": class_labels,
+        "models" : {}
+    }
+    
+    if 'vgg16' in query:
+        predicted_class, confidence, prediction_time, probabilities = VGG16(device=device).predict(image)
+        
+        response_body["models"]['vgg16'] = {
+            'predicted_class': class_labels[predicted_class],
+            'confidence': confidence,
+            'prediction_time': prediction_time,
+            'probabilities': probabilities.tolist()
+        }
+
+    if 'inceptionv3' in query:
+        predicted_class, confidence, prediction_time, probabilities = INCEPTIONv3(device=device).predict(image)
+        response_body["models"]['inceptionv3'] = {
+            'predicted_class': class_labels[predicted_class],
+            'confidence': confidence,
+            'prediction_time': prediction_time,
+            'probabilities': probabilities.tolist()
+        }
+
+    if 'densenet' in query:
+        predicted_class, confidence, prediction_time, probabilities = DENSE_NET(device=device).predict(image)
+        response_body["models"]['densenet'] = {
+            'predicted_class': class_labels[predicted_class],
+            'confidence': confidence,
+            'prediction_time': prediction_time,
+            'probabilities': probabilities.tolist()
+        }
+    
+
+
+    return jsonify(response_body, 200)
+
+
 @api.route("/predict", methods=["POST"])
 def predict_endpoint():
 
@@ -44,6 +108,10 @@ def predict_endpoint():
 
     if not file:
         return jsonify({"error": "No file to be processed"}), 400
+    
+    # query
+    # model_query = request.args.get['model']
+    # print('model Params:', model_query)
 
     print('Image:', file)
     image = Image.open(file)
@@ -97,19 +165,24 @@ def predict_endpoint():
     image.save(original_buffered, format="PNG")
     original_img_str = base64.b64encode(original_buffered.getvalue()).decode('utf-8')
 
-    
     return jsonify({
         "original_image": original_img_str,
-        "masked_image": img_str,
+        "masked_image": img_str,    
         "class_labels": class_labels,
-        "baseline_prediction": class_labels[bpredicted_class],
-        "baseline_confidence": bconfidence,
-        "baseline_prediction_time": bprediction_time,
-        "baseline_probabilities" : bprobabilities.tolist(),
-        "proposed_prediction": class_labels[predicted_class],
-        "proposed_confidence": confidence,
-        "proposed_prediction_time": total_time,
-        "proposed_probabilities": probabilities.tolist(),
+        "models" : {
+            'baseline' : {
+                "prediction": class_labels[bpredicted_class],
+                "confidence": bconfidence,
+                "prediction_time": bprediction_time,
+                "probabilities" : bprobabilities.tolist(),
+                },
+            'proposed' : {
+                "prediction": class_labels[predicted_class],
+                "confidence": confidence,
+                "prediction_time": total_time,
+                "probabilities": probabilities.tolist(),
+            }
+        }
     }), 200
 
 def setup_routes(app):
