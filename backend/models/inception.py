@@ -5,16 +5,16 @@ from torchvision.models import inception_v3
 from backend.utils.helpers import preprocess_image_for_classifier
 
 class INCEPTIONV3:
-    def __init__(self, model_path="backend/models/weights/inception_weights_5epoch.pth", device='cpu'):
+    def __init__(self, model_path="backend/models/weights/inception_model_5epoch.pth", device='cpu'):
         self.device = torch.device(device)
 
-        self.model = inception_v3(weights="IMAGENET1K_V1")
-        self.model.fc = nn.Linear(self.model.fc.in_features, 18) 
+        self.model = torch.load(model_path, weights_only=False, map_location=device)
+        # self.model.fc = nn.Linear(self.model.fc.in_features, 18) 
         
-        if self.model.aux_logits:
-            self.model.AuxLogits.fc = nn.Linear(self.model.AuxLogits.fc.in_features, 18)  
+        # if self.model.aux_logits:
+            # self.model.AuxLogits.fc = nn.Linear(self.model.AuxLogits.fc.in_features, 18)  
         # Load saved weights
-        self.model.load_state_dict(torch.load(model_path, map_location=self.device))
+        # self.model.load_state_dict(torch.load(model_path, map_location=self.device))
 
         # Move model to device
         self.model = self.model.to(self.device)

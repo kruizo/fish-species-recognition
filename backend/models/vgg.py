@@ -5,13 +5,13 @@ from torchvision.models import vgg16
 from backend.utils.helpers import preprocess_image_for_classifier
 
 class VGG16:
-    def __init__(self, model_path="backend/models/weights/vgg16_weights_5epoch.pth", device='cpu'):
+    def __init__(self, model_path="backend/models/weights/vgg16_full_model_5epoch.pth", device='cpu'):
         self.device = torch.device(device)
 
-        self.model = vgg16(weights="IMAGENET1K_V1")
-        self.model.classifier[6] = nn.Linear(4096, 18)  # Modify classifier
+        self.model = torch.load(model_path, weights_only=False, map_location=device)
+        # self.model.classifier[6] = nn.Linear(4096, 18)  # Modify classifier
 
-        self.model.load_state_dict(torch.load(model_path, map_location=self.device))
+        # self.model.load_state_dict(torch.load(model_path, map_location=self.device))
 
         self.model = self.model.to(self.device)
         self.model.eval()

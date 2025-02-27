@@ -5,17 +5,16 @@ from torchvision.models import mobilenet_v2
 from backend.utils.helpers import preprocess_image_for_classifier
 
 class MOBILENET:
-    def __init__(self, model_path="backend/models/weights/mobilenet_v2_weights_5epoch.pth", device='cpu'):
+    def __init__(self, model_path="backend/models/weights/mobilenet_v2_model_5epoch.pth", device='cpu'):
         self.device = torch.device(device)
 
         # Load pre-trained MobileNetV2
-        self.model = mobilenet_v2(weights="IMAGENET1K_V1")
-
+        self.model = torch.load(model_path, weights_only=False, map_location=device)
         # Modify classifier for 18 classes
-        self.model.classifier[1] = nn.Linear(self.model.classifier[1].in_features, 18)
+        # self.model.classifier[1] = nn.Linear(self.model.classifier[1].in_features, 18)
 
         # Load trained weights
-        self.model.load_state_dict(torch.load(model_path, map_location=self.device), strict=False)
+        # self.model.load_state_dict(torch.load(model_path, map_location=self.device), strict=False)
         self.model = self.model.to(self.device)
         self.model.eval()
 

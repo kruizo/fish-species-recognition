@@ -26,11 +26,12 @@ class ProposedResNet(nn.Module):
     
 class PROPOSED_RESNET50:
     def __init__(self, model_path="backend/models/weights/FINAL_torch_weights_proposedb16notauglr001ENHANCEDwUNETtraintime_freezeAllEpoch30withclassweights.pth", device='cpu'):
-        self.model = models.resnet50(weights="IMAGENET1K_V1")
+        # self.model = torch.jit.load(model_path, map_location=device)
+        self.model = models.resnet50(pretrained=False)
         self.device = torch.device(device)
         self.model = ProposedResNet(self.model).to(device)
         self.model.load_state_dict(torch.load(model_path, map_location=device, weights_only=True))
-    
+
     def predict(self, image):
         image = preprocess_image_for_classifier(image).to(self.device)
         start_time = time.time()

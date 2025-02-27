@@ -6,14 +6,14 @@ from backend.utils.helpers import preprocess_image_for_classifier
 
 
 class DENSENET121:
-    def __init__(self, model_path="backend/models/weights/densenet_weights_5epoch.pth", device='cpu'):
-        self.model = densenet121(weights="IMAGENET1K_V1")
-        num_features = self.model.classifier.in_features
-        self.model.classifier = nn.Linear(num_features, 18)  # Same as your training script
+    def __init__(self, model_path="backend/models/weights/densenet_full_model_5epoch.pth", device='cpu'):
+        self.model = torch.load(model_path, weights_only=False, map_location=device)
+        # num_features = self.model.classifier.in_features
+        # self.model.classifier = nn.Linear(num_features, 18)  # Same as your training script
 
         self.device = torch.device(device)
         self.model = self.model.to(device)
-        self.model.load_state_dict(torch.load(model_path, map_location=device, weights_only=True))
+        # self.model.load_state_dict(torch.load(model_path, map_location=device, weights_only=True))
 
     def predict(self, image):
         image = preprocess_image_for_classifier(image).to(self.device)
