@@ -7,7 +7,7 @@ import torch.nn.functional as F
 
 
 class ESRGAN:
-    def __init__(self, model_path='backend/models/weights/RRDB_PSNR_x4.pth', device='cpu'): 
+    def __init__(self, model_path='backend/models/weights/RRDB_ESRGAN_x4.pth', device='cpu'): 
         self.device = torch.device(device) 
         self.model = RRDBNet(3, 3, 64, 23, gc=32)
         self.model.load_state_dict(torch.load(model_path, map_location=self.device, weights_only=False))
@@ -24,7 +24,7 @@ class ESRGAN:
             self.model.eval()
             enhanced_image = self.model(image)
 
-        enhanced_image = F.interpolate(enhanced_image, size=(224, 224), mode='bilinear', align_corners=False)
+        enhanced_image = F.interpolate(enhanced_image, size=(224, 224), mode='bicubic', align_corners=False)
         time_taken = time.time() - start
         return enhanced_image, time_taken
     

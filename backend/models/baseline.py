@@ -20,7 +20,7 @@ class BaselineResNet(nn.Module):
         return x
 
 class BASELINE_RESNET50:
-    def __init__(self, model_path="backend/models/weights/torch_weights_baselineb32notauglr001notenhancedvallacc86testacc80traintime3m_2ssepoch5ratio70_20_10epoch5.pth", device='cpu'):
+    def __init__(self, model_path="backend/models/weights/FINAL_torch_weights_baselineb16notauglr001notenhancedtraintime_freezeAllEpoch30withclassweights.pth", device='cpu'):
         self.model = models.resnet50(weights="IMAGENET1K_V1")
         self.device = torch.device(device)
         self.model = BaselineResNet(self.model).to(device)
