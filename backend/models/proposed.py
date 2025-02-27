@@ -1,7 +1,7 @@
 import time
 import torch
 import torch.nn as nn
-from torchvision import models
+from torchvision.models import resnet50
 from backend.utils.helpers import preprocess_image_for_classifier
 
 
@@ -27,7 +27,7 @@ class ProposedResNet(nn.Module):
 class PROPOSED_RESNET50:
     def __init__(self, model_path="backend/models/weights/FINAL_torch_weights_proposedb16notauglr001ENHANCEDwUNETtraintime_freezeAllEpoch30withclassweights.pth", device='cpu'):
         # self.model = torch.jit.load(model_path, map_location=device)
-        self.model = models.resnet50(pretrained=False)
+        self.model = resnet50(weights="IMAGENET1K_V1")
         self.device = torch.device(device)
         self.model = ProposedResNet(self.model).to(device)
         self.model.load_state_dict(torch.load(model_path, map_location=device, weights_only=True))
