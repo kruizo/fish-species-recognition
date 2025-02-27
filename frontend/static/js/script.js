@@ -146,15 +146,32 @@ document.addEventListener("DOMContentLoaded", function () {
         });
         document.querySelector("#result-section").classList.remove("hidden");
 
-        // response = await fetch(
-        //   "predict/model?q=vgg16&q=inceptionv3&q=densenet"
-        // );
+        const [dense_response, inception_response, mobilenet_response] =
+          await Promise.all([
+            // fetch("predict/model/vgg", { method: "POST", body: formData }),
+            fetch("predict/model/densenet", { method: "POST", body: formData }),
+            fetch("predict/model/inception", {
+              method: "POST",
+              body: formData,
+            }),
+            fetch("predict/model/mobilenet", {
+              method: "POST",
+              body: formData,
+            }),
+          ]);
 
-        // tempData = await response.json();
+        // Parse JSON responses concurrently
+        const [dense_data, inception_data, mobilenet_data] = await Promise.all([
+          // vgg_response.json(),
+          dense_response.json(),
+          inception_response.json(),
+          mobilenet_response.json(),
+        ]);
 
-        // if (!tempData) {
-        //   return;
-        // }
+        // displayResult("vgg", vgg_data, true);
+        displayResult("dense", dense_data, true);
+        displayResult("inception", inception_data, true);
+        displayResult("mobilenet", mobilenet_data, true);
 
         updateProgress(2);
       } catch (error) {

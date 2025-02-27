@@ -7,7 +7,7 @@ import torch.nn.functional as F
 
 
 class ESRGAN:
-    def __init__(self, model_path='backend/models/weights/RRDB_ESRGAN_x4.pth', device='cpu'): 
+    def __init__(self, model_path='backend/models/weights/FINAL_RRDB_ESRGAN_x4.pth', device='cpu'): 
         self.device = torch.device(device) 
         self.model = RRDBNet(3, 3, 64, 23, gc=32)
         self.model.load_state_dict(torch.load(model_path, map_location=self.device, weights_only=False))
