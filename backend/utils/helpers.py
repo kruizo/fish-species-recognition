@@ -6,20 +6,12 @@ from torchvision import transforms
 import numpy as np
 import tensorflow as tf
 
-# def preprocess_image_for_classifier(file):
-#     image = Image.open(io.BytesIO(file.read()))
-#     transform = transforms.Compose([
-#         transforms.Resize((224, 224)),
-#         transforms.ToTensor(),
-#         transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
-#     ])
-#     return transform(image).unsqueeze(0).to(torch.device("cuda" if torch.cuda.is_available() else "cpu"))
-def preprocess_image_for_classifier(image):
+def preprocess_image_for_classifier(image, size = (224, 224)):
     if isinstance(image, np.ndarray):
         image = Image.fromarray(image)
 
     transform = transforms.Compose([
-        transforms.Resize((224, 224)),
+        transforms.Resize(size),
         transforms.ToTensor(),
         transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
     ])

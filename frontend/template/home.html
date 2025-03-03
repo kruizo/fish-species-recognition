@@ -69,7 +69,7 @@
               >
                 <p class="font-extrabold text-4xl">Fish Specie Classifier</p>
                 <p>
-                  A classification model which can classify up to
+                  A fish classification model which can classify up to
                   <span class="text-[var(--color-accent)]"
                     ><strong>18</strong></span
                   >
@@ -154,11 +154,13 @@
                   <div
                     class="w-full h-full flex flex-col justify-between px-5 py-4 z-20"
                   >
-                    <h2 class="text-center font-thin pb-3">BASELINE</h2>
+                    <h2 class="text-center font-thin pb-3">BASE MODEL</h2>
                     <img src="" alt="" class="w-50 h-50 mx-auto" />
                     <div class="mx-auto flex p-4 w-fit gap-4 items-center">
                       <p><span class="baseline-speed font-bold"></span>ms</p>
-                      <p><span class="baseline-conf font-bold"></span>% AC</p>
+                      <p>
+                        <span class="baseline-conf font-bold"></span>% Conf.
+                      </p>
                     </div>
                     <h1
                       class="text-center baseline-pred font-semibold italic"
@@ -182,7 +184,9 @@
                     <img src="" alt="" class="w-50 h-50 mx-auto" />
                     <div class="mx-auto flex p-4 w-fit gap-4 items-center">
                       <p><span class="proposed-speed font-bold"></span>ms</p>
-                      <p><span class="proposed-conf font-bold"></span>% AC</p>
+                      <p>
+                        <span class="proposed-conf font-bold"></span>% Conf.
+                      </p>
                     </div>
                     <h1
                       class="text-center proposed-pred font-semibold italic"
@@ -200,94 +204,107 @@
             </div>
           </section>
 
-          <!-- Save Section -->
           <section id="save-section" class="hidden">
-            <div class="container mx-auto p-6">
-              <h2 class="text-2xl font-semibold text-center mb-4">Comparison & Save Results</h2>
-              
-              <div class="grid grid-cols-1 md:grid-cols-3 gap-6 justify-center place-items-center">
-                <!-- Proposed Model -->
-                <div class="card" id="proposed-card">
-                  <div
-                    class="h-full w-full flex flex-col justify-between px-5 py-4 z-20"
+            <div class="mx-auto">
+              <div
+                class="pt-20 pb-5 flex flex-col items-center mx-auto w-full space-y-4"
+              >
+                <p class="italic text-[var(--text-dark)]">Compare Results</p>
+                <p class="font-extrabold text-4xl text-white">
+                  Here's what other models think.
+                </p>
+                <p>
+                  Classified using
+                  <span
+                    ><strong class="text-[var(--color-accent)]"
+                      >MobileNetV2</strong
+                    >,
+                    <strong class="text-[var(--color-accent)]"
+                      >InceptionV3</strong
+                    >, and
+                    <strong class="text-[var(--color-accent)]"
+                      >DenseNet121</strong
+                    ></span
                   >
-                    <h2 class="text-center font-thin pb-3">VGG-19</h2>
-                    <img src="" alt="" class="w-50 h-50 mx-auto" />
-                    <div class="mx-auto flex p-4 w-fit gap-4 items-center">
-                      <p><span class="proposed-speed font-bold"></span>ms</p>
-                      <p><span class="proposed-conf font-bold"></span>% AC</p>
-                    </div>
-                    <h1
-                      class="text-center proposed-pred font-semibold italic"
-                    ></h1>
-                    <button
-                      type="button"
-                      id="proposed-show-graph"
-                      class="my-2 px-2 py-1 cursor-pointer text-sm w-full rounded-md text-[var(--color-accent)] hover:underline"
-                    >
-                      Show Graph
-                    </button>
-                  </div>
-                </div>
-          
-                <!-- Baseline Model -->
-                <div class="card" id="proposed-card">
-                  <div
-                    class="h-full w-full flex flex-col justify-between px-5 py-4 z-20"
-                  >
-                    <h2 class="text-center font-thin pb-3">INCEPTIONv3</h2>
-                    <img src="" alt="" class="w-50 h-50 mx-auto" />
-                    <div class="mx-auto flex p-4 w-fit gap-4 items-center">
-                      <p><span class="proposed-speed font-bold"></span>ms</p>
-                      <p><span class="proposed-conf font-bold"></span>% AC</p>
-                    </div>
-                    <h1
-                      class="text-center proposed-pred font-semibold italic"
-                    ></h1>
-                    <button
-                      type="button"
-                      id="proposed-show-graph"
-                      class="my-2 px-2 py-1 cursor-pointer text-sm w-full rounded-md text-[var(--color-accent)] hover:underline"
-                    >
-                      Show Graph
-                    </button>
-                  </div>
-                </div>
-          
-                <!-- Another Model (e.g., Industry Standard) -->
-                <div class="card" id="proposed-card">
-                  <div
-                    class="h-full w-full flex flex-col justify-between px-5 py-4 z-20"
-                  >
-                    <h2 class="text-center font-thin pb-3">PROPOSED</h2>
-                    <img src="" alt="" class="w-50 h-50 mx-auto" />
-                    <div class="mx-auto flex p-4 w-fit gap-4 items-center">
-                      <p><span class="proposed-speed font-bold"></span>ms</p>
-                      <p><span class="proposed-conf font-bold"></span>% AC</p>
-                    </div>
-                    <h1
-                      class="text-center proposed-pred font-semibold italic"
-                    ></h1>
-                    <button
-                      type="button"
-                      id="proposed-show-graph"
-                      class="my-2 px-2 py-1 cursor-pointer text-sm w-full rounded-md text-[var(--color-accent)] hover:underline"
-                    >
-                      Show Graph
-                    </button>
-                  </div>
-                </div>
+                </p>
               </div>
-          
-              <div class="text-center mt-6">
-                <button id="download-results" class="px-4 py-2 bg-blue-600 text-white rounded-lg shadow-md hover:bg-blue-700">
-                  Download Report
-                </button>
+
+              <div
+                class="flex p-4 w-fit mx-auto gap-20 space-x-10 justify-between items-center"
+              >
+                <div class="card" id="mobilenet-card">
+                  <div
+                    class="w-full h-full flex flex-col justify-between px-5 py-4 z-20"
+                  >
+                    <h2 class="text-center font-thin pb-3">MobileNetV2</h2>
+                    <img src="" alt="" class="w-50 h-50 mx-auto" />
+                    <div class="mx-auto flex p-4 w-fit gap-4 items-center">
+                      <p><span class="mobilenet-speed font-bold"></span>ms</p>
+                      <p>
+                        <span class="mobilenet-conf font-bold"></span>% Conf.
+                      </p>
+                    </div>
+                    <h1
+                      class="text-center mobilenet-pred font-semibold italic"
+                    ></h1>
+                    <button
+                      type="button"
+                      id="mobilenet-show-graph"
+                      class="my-2 px-2 py-1 cursor-pointer text-sm w-full rounded-md text-[var(--color-accent)] hover:underline"
+                    >
+                      Show Graph
+                    </button>
+                  </div>
+                </div>
+                <div class="card" id="inception-card">
+                  <div
+                    class="h-full w-full flex flex-col justify-between px-5 py-4 z-20"
+                  >
+                    <h2 class="text-center font-thin pb-3">InceptionV3</h2>
+                    <img src="" alt="" class="w-50 h-50 mx-auto" />
+                    <div class="mx-auto flex p-4 w-fit gap-4 items-center">
+                      <p><span class="inception-speed font-bold"></span>ms</p>
+                      <p>
+                        <span class="inception-conf font-bold"></span>% Conf.
+                      </p>
+                    </div>
+                    <h1
+                      class="text-center inception-pred font-semibold italic"
+                    ></h1>
+                    <button
+                      type="button"
+                      id="inception-show-graph"
+                      class="my-2 px-2 py-1 cursor-pointer text-sm w-full rounded-md text-[var(--color-accent)] hover:underline"
+                    >
+                      Show Graph
+                    </button>
+                  </div>
+                </div>
+                <div class="card" id="dense-card">
+                  <div
+                    class="h-full w-full flex flex-col justify-between px-5 py-4 z-20"
+                  >
+                    <h2 class="text-center font-thin pb-3">DenseNet121</h2>
+                    <img src="" alt="" class="w-50 h-50 mx-auto" />
+                    <div class="mx-auto flex p-4 w-fit gap-4 items-center">
+                      <p><span class="dense-speed font-bold"></span>ms</p>
+                      <p><span class="dense-conf font-bold"></span>% Conf.</p>
+                    </div>
+                    <h1
+                      class="text-center dense-pred font-semibold italic"
+                    ></h1>
+                    <button
+                      type="button"
+                      id="dense-show-graph"
+                      class="my-2 px-2 py-1 cursor-pointer text-sm w-full rounded-md text-[var(--color-accent)] hover:underline"
+                    >
+                      Show Graph
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
           </section>
-          
-
         </div>
 
         <!-- Progress Indicators -->
@@ -338,7 +355,7 @@
             >
               <h2 class="text-xs text-center">3</h2>
             </button>
-            <p class="text-center text-sm text-[var(--text-dark)]">Verify</p>
+            <p class="text-center text-sm text-[var(--text-dark)]">Compare</p>
           </div>
         </div>
       </section>

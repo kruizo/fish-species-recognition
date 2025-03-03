@@ -1,7 +1,7 @@
 import time
 import torch
 import torch.nn as nn
-from torchvision import models
+from torchvision.models import resnet50
 from backend.utils.helpers import preprocess_image_for_classifier
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -20,11 +20,12 @@ class BaselineResNet(nn.Module):
         return x
 
 class BASELINE_RESNET50:
-    def __init__(self, model_path="backend/models/weights/torch_weights_baselineb32notauglr001notenhancedvallacc86testacc80traintime3m_2ssepoch5ratio70_20_10epoch5.pth", device='cpu'):
-        self.model = models.resnet50(weights="IMAGENET1K_V1")
-        self.device = torch.device(device)
+    def __init__(self, model_path="backend/models/weights/FINAL_torch_weights_baselineb16notauglr001notenhancedtraintime_freezeAllEpoch30withclassweights.pth", device='cpu'):
+        # self.model = torch.load(model_path, map_location=device)
+        self.model = resnet50(weights="IMAGENET1K_V1")
         self.model = BaselineResNet(self.model).to(device)
-        self.model.load_state_dict(torch.load(model_path, weights_only=True))
+        self.device = torch.device(device)
+        self.model.load_state_dict(torch.load(model_path, map_location=device, weights_only=True))
 
     def predict(self, image):
         image = preprocess_image_for_classifier(image).to(self.device)

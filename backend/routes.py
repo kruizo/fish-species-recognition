@@ -13,15 +13,19 @@ warnings.filterwarnings("ignore", category=DeprecationWarning)
 warnings.filterwarnings("ignore", category=FutureWarning)
 
 from flask import Blueprint, request, jsonify
+from PIL import Image, ImageFile
+
+# Models
 from backend.models.baseline import BASELINE_RESNET50
 from backend.models.proposed import PROPOSED_RESNET50
+# from backend.models.vgg import VGG16
+from backend.models.inception import INCEPTIONV3
+from backend.models.densenet import DENSENET121
+from backend.models.mobilenet import MOBILENET
 from backend.models.unet import UNET
 from backend.models.esrgan import ESRGAN
-from backend.utils.helpers import convert_img_numpy, conver_mask_numpy, save_image, save_image_as_png
 
-from PIL import Image, ImageFile
 ImageFile.LOAD_TRUNCATED_IMAGES = True
-
 
 api = Blueprint("backend", __name__)
 
@@ -33,6 +37,138 @@ class_labels = [
 'Zebrasoma Scopas'
 ]
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+
+# vgg_model = VGG16(device=device)
+inception_model = INCEPTIONV3(device=device)
+densenet_model = DENSENET121(device=device)
+mobilenet_model = MOBILENET(device=device)
+unet_model = UNET(device=device)
+esrgan_model = ESRGAN(device=device)
+proposed_model = PROPOSED_RESNET50(device=device)
+baseline_model = BASELINE_RESNET50(device=device)
+
+@api.route('/predict/model/mobilenet', methods=['POST'])
+def predict_mobilenet_endpoint():
+    if "file" not in request.files:
+        return jsonify({"error": "No file uploaded"}), 400
+
+    file = request.files["file"]
+
+    if not file:
+        return jsonify({"error": "No file to be processed"}), 400
+
+    file = request.files["file"]
+    image = Image.open(file)
+
+    original_buffered = BytesIO()
+    image.save(original_buffered, format="PNG")
+    original_img_str = base64.b64encode(original_buffered.getvalue()).decode("utf-8")
+    original_img_str = f"data:image/png;base64,{original_img_str}"
+
+    predicted_class, confidence, prediction_time, probabilities = mobilenet_model.predict(image)
+
+    print(f"MOBILENET= Prediction: {class_labels[predicted_class]} | Confidence: {confidence:.2f} | Prediction Time: {prediction_time:.3f}s")
+    return jsonify({
+        "name": 'densenet121',
+        "image": original_img_str,
+        "prediction": class_labels[predicted_class],
+        "confidence": confidence,
+        "prediction_time": prediction_time,
+        "probabilities": probabilities.tolist()
+    }), 200
+
+
+@api.route('/predict/model/inception', methods=['POST'])
+def predict_inception_endpoint():
+    if "file" not in request.files:
+        return jsonify({"error": "No file uploaded"}), 400
+
+    file = request.files["file"]
+
+    if not file:
+        return jsonify({"error": "No file to be processed"}), 400
+
+    file = request.files["file"]
+    image = Image.open(file)
+
+    original_buffered = BytesIO()
+    image.save(original_buffered, format="PNG")
+    original_img_str = base64.b64encode(original_buffered.getvalue()).decode("utf-8")
+    original_img_str = f"data:image/png;base64,{original_img_str}"
+
+    predicted_class, confidence, prediction_time, probabilities = inception_model.predict(image)
+    print(f"INCEPTION= Prediction: {class_labels[predicted_class]} | Confidence: {confidence:.2f} | Prediction Time: {prediction_time:.3f}s")
+    return jsonify({
+        "name": 'densenet121',
+        "image": original_img_str,
+        "original_image": original_img_str,
+        "prediction": class_labels[predicted_class],
+        "confidence": confidence,
+        "prediction_time": prediction_time,
+        "probabilities": probabilities.tolist()
+    }), 200
+
+@api.route('/predict/model/densenet', methods=['POST'])
+def predict_densenet_endpoint():
+    if "file" not in request.files:
+        return jsonify({"error": "No file uploaded"}), 400
+
+    file = request.files["file"]
+
+    if not file:
+        return jsonify({"error": "No file to be processed"}), 400
+
+    file = request.files["file"]
+    image = Image.open(file)
+
+    original_buffered = BytesIO()
+    image.save(original_buffered, format="PNG")
+    original_img_str = base64.b64encode(original_buffered.getvalue()).decode("utf-8")
+    original_img_str = f"data:image/png;base64,{original_img_str}"
+    predicted_class, confidence, prediction_time, probabilities = densenet_model.predict(image)
+    print(f"DENSENET= Prediction: {class_labels[predicted_class]} | Confidence: {confidence:.2f} | Prediction Time: {prediction_time:.3f}s")
+    return jsonify({
+        "name": 'densenet121',
+        "image": original_img_str,
+        "prediction": class_labels[predicted_class],
+        "confidence": confidence,
+        "prediction_time": prediction_time,
+        "probabilities": probabilities.tolist()
+    }), 200
+
+
+# @api.route('/predict/model/vgg', methods=['POST'])
+# def predict_model_endpoint():
+
+#     if "file" not in request.files:
+#         return jsonify({"error": "No file uploaded"}), 400
+
+#     file = request.files["file"]
+
+#     if not file:
+#         return jsonify({"error": "No file to be processed"}), 400
+    
+
+#     print('Image:', file)
+#     image = Image.open(file)
+
+#     original_buffered = BytesIO()
+#     image.save(original_buffered, format="PNG")
+#     original_img_str = base64.b64encode(original_buffered.getvalue()).decode('utf-8')
+#     original_img_str = f"data:image/png;base64,{original_img_str}"
+
+#     predicted_class, confidence, prediction_time, probabilities = vgg_model.predict(image)
+#     print(f"VGG= Prediction: {class_labels[predicted_class]} | Confidence: {confidence:.2f} | Prediction Time: {prediction_time:.3f}s")
+#     return jsonify({
+#         "name": 'vgg16',
+#         "image": original_img_str,
+#         "class_labels": class_labels,
+#         'prediction': class_labels[predicted_class],
+#         'confidence': confidence,
+#         'prediction_time': prediction_time,
+#         'probabilities': probabilities.tolist()
+#     }), 200
 
 @api.route("/predict", methods=["POST"])
 def predict_endpoint():
@@ -47,40 +183,19 @@ def predict_endpoint():
 
     print('Image:', file)
     image = Image.open(file)
-    # print('Image loaded...')
 
-    bpredicted_class, bconfidence, bprediction_time, bprobabilities = BASELINE_RESNET50(device=device).predict(image)
+    bpredicted_class, bconfidence, bprediction_time, bprobabilities = baseline_model.predict(image)
 
-
-    # print('Enhancing image...')
-    enhanced_image, esrgan_time = ESRGAN(device=device).predict(image)
-    # print('Image enhanced... TIME TAKEN: ', time_taken)
-    # print('Image enhanced SHAPE:', enhanced_image.shape)
-    # print(f"Saving Enhanced image: {filename}")
+    enhanced_image, esrgan_time = esrgan_model.predict(image)
     
-    # save_image_as_png(enhanced_image, "enhanced - " + filename, enhanced_output_dir)
-    # print(f"Image saved: {filename}")
-    
-    # print('Masking image...')
-    binary_mask, unet_time = UNET(device=device).predict(enhanced_image)
-    # print('Image masked...')
-    
-    # print('Mask SHAPE:', binary_mask.shape)
+    binary_mask, unet_time = unet_model.predict(enhanced_image)
 
     enhanced_image = enhanced_image.squeeze().cpu().numpy().transpose(1, 2, 0)
 
     masked_image = enhanced_image * np.expand_dims(binary_mask, axis=-1)
-    
     masked_image = np.clip(masked_image * 255, 0, 255).astype(np.uint8)
     
-    # print("Image shapes: ", enhanced_image.shape, masked_image.shape, binary_mask.shape)
-
-    # print(f"Saving Masked image: {filename}")
-    # save_image(masked_image, "masked - " + filename, masked_output_dir)
-    # print(f"Image saved: {filename}")
-    
-    # print("Classifying the image...")
-    predicted_class, confidence, prediction_time, probabilities = PROPOSED_RESNET50(device=device).predict(masked_image)
+    predicted_class, confidence, prediction_time, probabilities = proposed_model.predict(masked_image)
 
 
     total_time = prediction_time + esrgan_time + unet_time
@@ -92,24 +207,31 @@ def predict_endpoint():
     buffered = BytesIO()
     Image.fromarray(masked_image).save(buffered, format="PNG")
     img_str = base64.b64encode(buffered.getvalue()).decode('utf-8')
+    img_str = f"data:image/png;base64,{img_str}"
 
     original_buffered = BytesIO()
     image.save(original_buffered, format="PNG")
     original_img_str = base64.b64encode(original_buffered.getvalue()).decode('utf-8')
+    original_img_str = f"data:image/png;base64,{original_img_str}"
 
-    
     return jsonify({
-        "original_image": original_img_str,
-        "masked_image": img_str,
         "class_labels": class_labels,
-        "baseline_prediction": class_labels[bpredicted_class],
-        "baseline_confidence": bconfidence,
-        "baseline_prediction_time": bprediction_time,
-        "baseline_probabilities" : bprobabilities.tolist(),
-        "proposed_prediction": class_labels[predicted_class],
-        "proposed_confidence": confidence,
-        "proposed_prediction_time": total_time,
-        "proposed_probabilities": probabilities.tolist(),
+        "models" : {
+            'baseline' : {
+                "prediction": class_labels[bpredicted_class],
+                "confidence": bconfidence,
+                "prediction_time": bprediction_time,
+                "probabilities" : bprobabilities.tolist(),
+                "image" : original_img_str
+                },
+            'proposed' : {
+                "prediction": class_labels[predicted_class],
+                "confidence": confidence,
+                "prediction_time": total_time,
+                "probabilities": probabilities.tolist(),
+                "image" : img_str
+            }
+        }
     }), 200
 
 def setup_routes(app):
