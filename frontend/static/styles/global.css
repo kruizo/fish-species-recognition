@@ -1,4 +1,27 @@
 /* From Uiverse.io by satyamchaudharydev */
+:root{
+  --color-primary: #00080f;
+  --color-accent: #2b7fff;
+  --color-accent-light: #6eacda;
+  --color-secondary: #f5f5f5;
+  --text-dark: #9c9c9b;
+  --color-gray: #2b2b2b;
+}
+
+html {
+  color: var(--color-secondary);
+}
+body {
+  margin: 0;
+  box-sizing: border-box;
+  padding: 0;
+  background-color: var(--color-primary);
+}
+
+.test {
+  border: 1px solid red;
+}
+
 .loading {
   --speed-of-animation: 0.9s;
   --gap: 6px;

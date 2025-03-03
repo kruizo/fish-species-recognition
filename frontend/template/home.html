@@ -9,34 +9,13 @@
       rel="stylesheet"
       href="{{ url_for('static', filename='styles/global.css') }}"
     />
+    <!-- TAILWIND -->
     <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
-    <style type="text/tailwindcss">
-      @theme {
-        --color-primary: #00080f;
-        --color-accent: #2b7fff;
-        --color-accent-light: #6eacda;
-        --color-secondary: #f5f5f5;
-        --text-dark: #9c9c9b;
-        --color-gray: #2b2b2b;
-      }
-    </style>
+    <!-- Graph -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Modal -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   </head>
-  <style>
-    html {
-      color: var(--color-secondary);
-    }
-    body {
-      margin: 0;
-      box-sizing: border-box;
-      padding: 0;
-      background-color: var(--color-primary);
-    }
-    .test {
-      border: 1px solid red;
-    }
-  </style>
   <body>
     <header class="w-full bg-[var(--color-primary)]">
       <nav
@@ -64,7 +43,7 @@
           </div>
           <div
             class="hover:cursor-pointer hover:text-blue-400"
-            onclick="showContent('about')"
+            onclick="showContent('contact')"
           >
             Contact Us
           </div>
@@ -81,7 +60,8 @@
     <main class="max-w-screen-2xl mx-auto">
       <section id="content-section">
         <div id="content-wrapper" class="h-full w-full">
-          <!-- Home Section -->
+
+          <!-- Upload Section -->
           <section id="upload-section">
             <div class="mx-auto">
               <div
@@ -98,6 +78,7 @@
               </div>
             </div>
 
+            <!-- Drop Area / Upload Card-->
             <div class="flex flex-col items-center py-10 space-y-6 group">
               <div
                 class="relative max-w-screen-sm w-full h-[300px] p-1 rounded-xl bg-gradient-to-l from-[var(--color-accent-light)] to-blue-500 overflow-visible group"
@@ -146,6 +127,7 @@
               </div>
             </div>
           </section>
+
           <!-- REsult Section-->
           <section id="result-section" class="hidden">
             <div class="mx-auto">
@@ -168,7 +150,7 @@
               <div
                 class="flex p-4 w-fit mx-auto gap-20 space-x-10 justify-between items-center"
               >
-                <div class="card" id="baseline-card">
+                <div id="baseline-card">
                   <div
                     class="w-full h-full flex flex-col justify-between px-5 py-4 z-20"
                   >
@@ -190,6 +172,8 @@
                     </button>
                   </div>
                 </div>
+
+                <!-- Proposed Card / .card-plain = no rotating border-->
                 <div class="card-plain" id="proposed-card">
                   <div
                     class="h-full w-full flex flex-col justify-between px-5 py-4 z-20"
@@ -216,7 +200,94 @@
             </div>
           </section>
 
-          <section id="save-section" class="hidden"></section>
+          <!-- Save Section -->
+          <section id="save-section" class="hidden">
+            <div class="container mx-auto p-6">
+              <h2 class="text-2xl font-semibold text-center mb-4">Comparison & Save Results</h2>
+              
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-6 justify-center place-items-center">
+                <!-- Proposed Model -->
+                <div class="card" id="proposed-card">
+                  <div
+                    class="h-full w-full flex flex-col justify-between px-5 py-4 z-20"
+                  >
+                    <h2 class="text-center font-thin pb-3">VGG-19</h2>
+                    <img src="" alt="" class="w-50 h-50 mx-auto" />
+                    <div class="mx-auto flex p-4 w-fit gap-4 items-center">
+                      <p><span class="proposed-speed font-bold"></span>ms</p>
+                      <p><span class="proposed-conf font-bold"></span>% AC</p>
+                    </div>
+                    <h1
+                      class="text-center proposed-pred font-semibold italic"
+                    ></h1>
+                    <button
+                      type="button"
+                      id="proposed-show-graph"
+                      class="my-2 px-2 py-1 cursor-pointer text-sm w-full rounded-md text-[var(--color-accent)] hover:underline"
+                    >
+                      Show Graph
+                    </button>
+                  </div>
+                </div>
+          
+                <!-- Baseline Model -->
+                <div class="card" id="proposed-card">
+                  <div
+                    class="h-full w-full flex flex-col justify-between px-5 py-4 z-20"
+                  >
+                    <h2 class="text-center font-thin pb-3">INCEPTIONv3</h2>
+                    <img src="" alt="" class="w-50 h-50 mx-auto" />
+                    <div class="mx-auto flex p-4 w-fit gap-4 items-center">
+                      <p><span class="proposed-speed font-bold"></span>ms</p>
+                      <p><span class="proposed-conf font-bold"></span>% AC</p>
+                    </div>
+                    <h1
+                      class="text-center proposed-pred font-semibold italic"
+                    ></h1>
+                    <button
+                      type="button"
+                      id="proposed-show-graph"
+                      class="my-2 px-2 py-1 cursor-pointer text-sm w-full rounded-md text-[var(--color-accent)] hover:underline"
+                    >
+                      Show Graph
+                    </button>
+                  </div>
+                </div>
+          
+                <!-- Another Model (e.g., Industry Standard) -->
+                <div class="card" id="proposed-card">
+                  <div
+                    class="h-full w-full flex flex-col justify-between px-5 py-4 z-20"
+                  >
+                    <h2 class="text-center font-thin pb-3">PROPOSED</h2>
+                    <img src="" alt="" class="w-50 h-50 mx-auto" />
+                    <div class="mx-auto flex p-4 w-fit gap-4 items-center">
+                      <p><span class="proposed-speed font-bold"></span>ms</p>
+                      <p><span class="proposed-conf font-bold"></span>% AC</p>
+                    </div>
+                    <h1
+                      class="text-center proposed-pred font-semibold italic"
+                    ></h1>
+                    <button
+                      type="button"
+                      id="proposed-show-graph"
+                      class="my-2 px-2 py-1 cursor-pointer text-sm w-full rounded-md text-[var(--color-accent)] hover:underline"
+                    >
+                      Show Graph
+                    </button>
+                  </div>
+                </div>
+              </div>
+          
+              <div class="text-center mt-6">
+                <button id="download-results" class="px-4 py-2 bg-blue-600 text-white rounded-lg shadow-md hover:bg-blue-700">
+                  Download Report
+                </button>
+              </div>
+            </div>
+          </section>
+          
+
         </div>
 
         <!-- Progress Indicators -->
@@ -267,10 +338,12 @@
             >
               <h2 class="text-xs text-center">3</h2>
             </button>
-            <p class="text-center text-sm text-[var(--text-dark)]">Save</p>
+            <p class="text-center text-sm text-[var(--text-dark)]">Verify</p>
           </div>
         </div>
       </section>
+
+      <!-- Loader -->
       <div
         class="h-[90vh] bg-[var(--color-primary)] w-full flex flex-col hidden justify-center items-center z-50"
         id="loader"
@@ -280,6 +353,7 @@
         </div>
         <h1 class="font-thin">Classifying...</h1>
       </div>
+
     </main>
 
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>
