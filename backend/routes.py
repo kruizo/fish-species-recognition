@@ -61,17 +61,29 @@ def predict_mobilenet_endpoint():
     file = request.files["file"]
     image = Image.open(file)
 
-    original_buffered = BytesIO()
-    image.save(original_buffered, format="PNG")
-    original_img_str = base64.b64encode(original_buffered.getvalue()).decode("utf-8")
-    original_img_str = f"data:image/png;base64,{original_img_str}"
+    enhanced_image, esrgan_time = esrgan_model.predict(image)
+    
+    binary_mask, unet_time = unet_model.predict(enhanced_image)
 
-    predicted_class, confidence, prediction_time, probabilities = mobilenet_model.predict(image)
+    enhanced_image = enhanced_image.squeeze().cpu().numpy().transpose(1, 2, 0)
 
-    print(f"MOBILENET= Prediction: {class_labels[predicted_class]} | Confidence: {confidence:.2f} | Prediction Time: {prediction_time:.3f}s")
+    masked_image = enhanced_image * np.expand_dims(binary_mask, axis=-1)
+    masked_image = np.clip(masked_image * 255, 0, 255).astype(np.uint8)
+    
+
+    predicted_class, confidence, prediction_time, probabilities = mobilenet_model.predict(masked_image)
+
+    total_time = prediction_time + esrgan_time + unet_time
+
+    buffered = BytesIO()
+    Image.fromarray(masked_image).save(buffered, format="PNG")
+    img_str = base64.b64encode(buffered.getvalue()).decode('utf-8')
+    img_str = f"data:image/png;base64,{img_str}"
+
+    print(f"MOBILENET= Prediction: {class_labels[predicted_class]} | Confidence: {confidence:.2f} | Prediction Time: {prediction_time:.3f}s | Total Time: {total_time:.3f}s")
     return jsonify({
         "name": 'densenet121',
-        "image": original_img_str,
+        "image": img_str,
         "prediction": class_labels[predicted_class],
         "confidence": confidence,
         "prediction_time": prediction_time,
@@ -92,17 +104,28 @@ def predict_inception_endpoint():
     file = request.files["file"]
     image = Image.open(file)
 
-    original_buffered = BytesIO()
-    image.save(original_buffered, format="PNG")
-    original_img_str = base64.b64encode(original_buffered.getvalue()).decode("utf-8")
-    original_img_str = f"data:image/png;base64,{original_img_str}"
+    enhanced_image, esrgan_time = esrgan_model.predict(image)
+    
+    binary_mask, unet_time = unet_model.predict(enhanced_image)
 
-    predicted_class, confidence, prediction_time, probabilities = inception_model.predict(image)
-    print(f"INCEPTION= Prediction: {class_labels[predicted_class]} | Confidence: {confidence:.2f} | Prediction Time: {prediction_time:.3f}s")
+    enhanced_image = enhanced_image.squeeze().cpu().numpy().transpose(1, 2, 0)
+
+    masked_image = enhanced_image * np.expand_dims(binary_mask, axis=-1)
+    masked_image = np.clip(masked_image * 255, 0, 255).astype(np.uint8)
+
+    predicted_class, confidence, prediction_time, probabilities = inception_model.predict(masked_image)
+
+    total_time = prediction_time + esrgan_time + unet_time
+
+    buffered = BytesIO()
+    Image.fromarray(masked_image).save(buffered, format="PNG")
+    img_str = base64.b64encode(buffered.getvalue()).decode('utf-8')
+    img_str = f"data:image/png;base64,{img_str}"
+
+    print(f"INCEPTION= Prediction: {class_labels[predicted_class]} | Confidence: {confidence:.2f} | Prediction Time: {prediction_time:.3f}s | Total Time: {total_time:.3f}s")
     return jsonify({
         "name": 'densenet121',
-        "image": original_img_str,
-        "original_image": original_img_str,
+        "image": img_str,
         "prediction": class_labels[predicted_class],
         "confidence": confidence,
         "prediction_time": prediction_time,
@@ -121,16 +144,31 @@ def predict_densenet_endpoint():
 
     file = request.files["file"]
     image = Image.open(file)
+    
 
-    original_buffered = BytesIO()
-    image.save(original_buffered, format="PNG")
-    original_img_str = base64.b64encode(original_buffered.getvalue()).decode("utf-8")
-    original_img_str = f"data:image/png;base64,{original_img_str}"
-    predicted_class, confidence, prediction_time, probabilities = densenet_model.predict(image)
-    print(f"DENSENET= Prediction: {class_labels[predicted_class]} | Confidence: {confidence:.2f} | Prediction Time: {prediction_time:.3f}s")
+    enhanced_image, esrgan_time = esrgan_model.predict(image)
+    
+    binary_mask, unet_time = unet_model.predict(enhanced_image)
+
+    enhanced_image = enhanced_image.squeeze().cpu().numpy().transpose(1, 2, 0)
+
+    masked_image = enhanced_image * np.expand_dims(binary_mask, axis=-1)
+    masked_image = np.clip(masked_image * 255, 0, 255).astype(np.uint8)
+    
+
+    predicted_class, confidence, prediction_time, probabilities = densenet_model.predict(masked_image)
+
+    total_time = prediction_time + esrgan_time + unet_time
+
+    buffered = BytesIO()
+    Image.fromarray(masked_image).save(buffered, format="PNG")
+    img_str = base64.b64encode(buffered.getvalue()).decode('utf-8')
+    img_str = f"data:image/png;base64,{img_str}"
+
+    print(f"DENSENET= Prediction: {class_labels[predicted_class]} | Confidence: {confidence:.2f} | Prediction Time: {prediction_time:.3f}s | Total Time: {total_time:.3f}s")
     return jsonify({
         "name": 'densenet121',
-        "image": original_img_str,
+        "image": img_str,
         "prediction": class_labels[predicted_class],
         "confidence": confidence,
         "prediction_time": prediction_time,

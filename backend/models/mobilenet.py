@@ -5,7 +5,7 @@ from torchvision.models import mobilenet_v2
 from backend.utils.helpers import preprocess_image_for_classifier
 
 class MOBILENET:
-    def __init__(self, model_path="backend/models/weights/mobilenet_v2_model_30epoch.pth", device='cpu'):
+    def __init__(self, model_path="backend/models/weights/latestmobilenet_v2_model_30epoch.pth", device='cpu'):
         self.device = torch.device(device)
 
         # Load pre-trained MobileNetV2
