@@ -2,7 +2,6 @@ import time
 import numpy as np
 import torch
 from backend.utils.helpers import preprocess_image_for_segment
-import tensorflow as tf
 
 
 class UNET:

@@ -1,6 +1,5 @@
 from operator import __not__
 import os
-import tensorflow as tf
 import torch 
 import tensorflow_hub as hub
 
