@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='styles/global.css') }}"
+    />
+    <!-- TAILWIND -->
+    <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
+    <!-- Graph -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Modal -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  </head>
+  <body>
+    <header class="w-full bg-[var(--color-primary)]">
+      <nav
+        class="flex max-w-screen-2xl font-thin mx-auto justify-between items-center p-4"
+      >
+        <div class="flex items-center">
+          <div class="text-2xl font-bold">
+            <stong class="">FishNet+</stong
+            ><span class="text-[var(--color-accent)] scale-125">.</span>
+          </div>
+        </div>
+        <div class="flex items-center gap-4">
+          <a href="/">
+            <div class="hover:cursor-pointer hover:text-blue-400">Home</div>
+          </a>
+
+          <a href="/about"
+            ><div class="hover:cursor-pointer hover:text-blue-400">
+              About
+            </div></a
+          >
+          <a href="/contact"
+            ><div
+              class="hover:cursor-pointer hover:text-blue-500 text-blue-400"
+            >
+              Contact Us
+            </div></a
+          >
+          <a href="/howtouse"
+            ><div class="hover:cursor-pointer hover:text-blue-400">
+              How To Use
+            </div></a
+          >
+        </div>
+        <a href="https://github.com/kruizo/res-training" target="_blank">
+          <button
+            class="py-2 flex items-center transition-colors duration-300 font-bold justify-center gap-2 cursor-pointer border border-[var(--color-accent)] text-[var(--color-accent)] px-3 rounded-lg hover:bg-blue-400 hover:text-white"
+          >
+            <i class="fa fa-github" style="font-size: 25px"></i>
+            Github
+          </button>
+        </a>
+      </nav>
+    </header>
+
+    <main class="max-w-screen-2xl mx-auto">
+      <section id="content-section ">
+        <div class="max-w-screen-sm w-full mx-auto px-6 py-2">
+          <div class="flex items-center justify-center py-10">
+            <div class="text-5xl font-bold">
+              <stong class="">Contact Us</stong
+              ><span class="text-[var(--color-accent)] scale-125">.</span>
+            </div>
+          </div>
+          <p class="mb-8">
+            Feel free to fill out the form below to get in touch with us for
+            inquiries.
+          </p>
+
+          <form method="POST" action="/contact" class="space-y-4">
+            <!-- Flash Messages -->
+            {% with messages = get_flashed_messages(with_categories=true) %} {%
+            if messages %} {% for category, message in messages %}
+            <div
+              class="p-4 mb-4 rounded-lg text-white {% if category == 'success' %}bg-green-500{% else %}bg-red-500{% endif %}"
+            >
+              {{ message }}
+            </div>
+            {% endfor %} {% endif %} {% endwith %}
+
+            <div>
+              <label for="name" class="block text-sm font-medium text-gray-400"
+                >Name</label
+              >
+              <input
+                type="text"
+                id="name"
+                name="name"
+                required
+                placeholder="e.g. Juan Dela Cruz"
+                class="mt-1 block w-full bg-[#040c18] rounded-md shadow-sm p-2"
+              />
+            </div>
+
+            <div>
+              <label for="email" class="block text-sm font-medium text-gray-400"
+                >Email</label
+              >
+              <input
+                type="email"
+                id="email"
+                name="email"
+                required
+                placeholder="sample@email.com"
+                class="mt-1 block w-full bg-[#040c18] rounded-md shadow-sm p-2"
+              />
+            </div>
+
+            <div>
+              <label
+                for="message"
+                class="block text-sm font-medium text-gray-400"
+                >Message</label
+              >
+              <textarea
+                id="message"
+                name="message"
+                rows="4"
+                required
+                placeholder="Enter your message here..."
+                class="mt-1 block w-full bg-[#040c18] rounded-md shadow-sm p-2"
+              ></textarea>
+            </div>
+
+            <button
+              type="submit"
+              class="py-2 px-4 cursor-pointer bg-blue-500 text-white font-bold rounded-lg hover:bg-blue-600"
+            >
+              Send Message
+            </button>
+          </form>
+
+          <!-- <div class="mt-8">
+            <h2 class="text-2xl font-bold mb-4">Our Office</h2>
+            <p class="mb-2">
+              <i class="fa fa-map-marker" aria-hidden="true"></i> 123 Fish
+              Street, Ocean City, USA
+            </p>
+            <p class="mb-2">
+              <i class="fa fa-phone" aria-hidden="true"></i> +1 234 567 890
+            </p>
+            <p>
+              <i class="fa fa-envelope" aria-hidden="true"></i>
+              contact@fishnetplus.com
+            </p>
+          </div> -->
+        </div>
+      </section>
+    </main>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+  </body>
+</html>

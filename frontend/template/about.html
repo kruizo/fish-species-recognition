@@ -1,33 +1,147 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='styles/global.css') }}"
+    />
     <title>About - Fish Specie Classifier</title>
     <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-gray-100 text-gray-900">
+  </head>
+  <body>
     <!-- Navbar -->
-    <nav class="bg-blue-600 text-white p-4">
-        <div class="container mx-auto flex justify-between items-center">
-            <a href="index.html" class="text-xl font-bold">Fish Specie Classifier</a>
-            <ul class="flex space-x-4">
-                <li><a href="home.html" class="hover:underline">Home</a></li>
-                <li><a href="about.html" class="hover:underline">About</a></li>
-                <li><a href="contact.html" class="hover:underline">Contact</a></li>
-            </ul>
+    <header class="w-full bg-[var(--color-primary)]">
+      <nav
+        class="flex max-w-screen-2xl font-thin mx-auto justify-between items-center p-4"
+      >
+        <div class="flex items-center">
+          <div class="text-2xl font-bold">
+            <stong class="">FishNet+</stong
+            ><span class="text-[var(--color-accent)] scale-125">.</span>
+          </div>
         </div>
-    </nav>
-    
+        <div class="flex items-center gap-4">
+          <a href="/">
+            <div class="hover:cursor-pointer hover:text-blue-400">Home</div>
+          </a>
+
+          <a href="/about"
+            ><div
+              class="hover:cursor-pointer hover:text-blue-500 text-blue-400"
+            >
+              About
+            </div></a
+          >
+          <a href="/contact"
+            ><div class="hover:cursor-pointer hover:text-blue-400">
+              Contact Us
+            </div></a
+          >
+          <a href="/howtouse"
+            ><div class="hover:cursor-pointer hover:text-blue-400">
+              How To Use
+            </div></a
+          >
+        </div>
+        <a href="https://github.com/kruizo/res-training" target="_blank">
+          <button
+            class="py-2 flex items-center transition-colors duration-300 font-bold justify-center gap-2 cursor-pointer border border-[var(--color-accent)] text-[var(--color-accent)] px-3 rounded-lg hover:bg-blue-400 hover:text-white"
+          >
+            <i class="fa fa-github" style="font-size: 25px"></i>
+            Github
+          </button>
+        </a>
+      </nav>
+    </header>
+
     <!-- About Section -->
-    <section class="container mx-auto mt-10 p-6 bg-white shadow-md rounded-lg">
-        <h1 class="text-3xl font-bold text-center mb-4">About Fish Specie Classifier</h1>
-        <p class="text-lg text-gray-700 leading-relaxed">
-            The Fish Specie Classifier is a powerful web-based tool designed to help researchers, marine biologists, and enthusiasts identify fish species using computer vision technology. 
-            By simply uploading an image of a fish, the system processes the image using deep learning models to classify and provide accurate information about the species. 
-            This project aims to promote marine biodiversity awareness, assist in conservation efforts, and make fish identification more accessible to everyone. With an intuitive interface and real-time results, 
-            the Fish Specie Classifier bridges the gap between technology and marine science, offering an innovative solution for fish species recognition.
-        </p>
+    <section
+      class="container mx-auto mt-10 p-6 shadow-md rounded-lg text-white"
+    >
+      <div class="flex items-center justify-center pb-10">
+        <div class="text-5xl font-bold">
+          <stong class="">FishNet+</stong
+          ><span class="text-[var(--color-accent)] scale-125">.</span>
+        </div>
+      </div>
+      <p
+        class="text-lg text-[var(--text-dark)] leading-relaxed text-center pb-10"
+      >
+        Original Paper:
+        <a href="" class="text-[var(--color-accent)]">
+          Optimized ResNet-50 Transfer Learning with ESRGAN and U-Net for Fish
+          Species Identification in Underwater Environments
+        </a>
+      </p>
+      <p class="text-lg text-[var(--text-dark)] leading-relaxed">
+        FishNet. is a fish classification model designed to help researchers,
+        marine biologists, and enthusiasts identify fish species using computer
+        vision technology. This project aims to promote marine biodiversity
+        awareness, assist in conservation efforts, and make fish identification
+        more accessible to everyone. With an intuitive interface and real-time
+        results, the Fish Specie Classifier bridges the gap between technology
+        and marine science, offering an innovative solution for fish species
+        recognition. The model is trained to classify up to around 18 underwater
+        fish species shown in an image below.
+      </p>
+      <div class="items-center justify-center py-10 flex">
+        <img
+          src="{{ url_for('static', filename='images/species.png') }}"
+          alt="Fish Species"
+        />
+      </div>
+      <!-- PUT DESCRIPTION ABOUT THE BOTTOM TABLE -->
+      <!-- Put THE TABELE Here -->
+      <p class="text-lg text-[var(--text-dark)] leading-relaxed pb-6">
+        Our proposed model is compared against other state-of-the-art transfer
+        learning models, including MobileNetV2, DenseNet121, InceptionV3, and
+        ResNet-50. Research findings shows that the proposed model achieves the
+        highest accuracy while maintaining a competitive training time.
+      </p>
+      <div class="overflow-x-auto py-10">
+        <table class="min-w-full bg-gray-800 text-white rounded-lg shadow-lg">
+          <thead>
+            <tr class="bg-gray-700">
+              <th class="py-2 px-4 text-left">Model</th>
+              <th class="py-2 px-4 text-left">Accuracy</th>
+              <th class="py-2 px-4 text-left">Training Time (s)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="border-b border-gray-700">
+              <td class="py-2 px-4">MobileNetV2</td>
+              <td class="py-2 px-4">90.42%</td>
+              <td class="py-2 px-4">1215 seconds</td>
+            </tr>
+            <tr class="border-b border-gray-700">
+              <td class="py-2 px-4">DenseNet121</td>
+              <td class="py-2 px-4">92.36%</td>
+              <td class="py-2 px-4">1424 seconds</td>
+            </tr>
+            <tr class="border-b border-gray-700">
+              <td class="py-2 px-4">InceptionV3</td>
+              <td class="py-2 px-4">90.42%</td>
+              <td class="py-2 px-4">1311 seconds</td>
+            </tr>
+            <tr class="border-b border-gray-700">
+              <td class="py-2 px-4">ResNet-50</td>
+              <td class="py-2 px-4">93.47%</td>
+              <td class="py-2 px-4">1460 seconds</td>
+            </tr>
+            <tr class="font-bold bg-[var(--color-accent)]">
+              <td class="py-2 px-4">Proposed (Ours)</td>
+              <td class="py-2 px-4">95.00%</td>
+              <td class="py-2 px-4">1427 seconds</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </section>
-</body>
+  </body>
 </html>

@@ -23,44 +23,47 @@
       >
         <div class="flex items-center">
           <div class="text-2xl font-bold">
-            <stong class="">FishNet</stong
+            <stong class="">FishNet+</stong
             ><span class="text-[var(--color-accent)] scale-125">.</span>
           </div>
         </div>
         <div class="flex items-center gap-4">
-          <div
-            class="hover:cursor-pointer hover:text-white text-blue-400"
-            onclick="showContent('home')"
-          >
-            Home
-          </div>
+          <a href="/">
+            <div class="hover:cursor-pointer hover:text-blue-500 text-blue-400">
+              Home
+            </div>
+          </a>
 
-          <div
-            class="hover:cursor-pointer hover:text-blue-400"
-            onclick="showContent('about')"
+          <a href="/about"
+            ><div class="hover:cursor-pointer hover:text-blue-400">
+              About
+            </div></a
           >
-            About
-          </div>
-          <div
-            class="hover:cursor-pointer hover:text-blue-400"
-            onclick="showContent('contact')"
+          <a href="/contact"
+            ><div class="hover:cursor-pointer hover:text-blue-400">
+              Contact Us
+            </div></a
           >
-            Contact Us
-          </div>
+          <a href="/howtouse"
+            ><div class="hover:cursor-pointer hover:text-blue-400">
+              How To Use
+            </div></a
+          >
         </div>
-        <button
-          class="py-2 flex items-center transition-colors duration-300 font-bold justify-center gap-2 cursor-pointer border border-[var(--color-accent)] text-[var(--color-accent)] px-3 rounded-lg hover:bg-blue-400 hover:text-white"
-        >
-          <i class="fa fa-github" style="font-size: 25px"></i>
-          Github
-        </button>
+        <a href="https://github.com/kruizo/res-training" target="_blank">
+          <button
+            class="py-2 flex items-center transition-colors duration-300 font-bold justify-center gap-2 cursor-pointer border border-[var(--color-accent)] text-[var(--color-accent)] px-3 rounded-lg hover:bg-blue-400 hover:text-white"
+          >
+            <i class="fa fa-github" style="font-size: 25px"></i>
+            Github
+          </button>
+        </a>
       </nav>
     </header>
 
     <main class="max-w-screen-2xl mx-auto">
       <section id="content-section">
         <div id="content-wrapper" class="h-full w-full">
-
           <!-- Upload Section -->
           <section id="upload-section">
             <div class="mx-auto">
@@ -370,7 +373,6 @@
         </div>
         <h1 class="font-thin">Classifying...</h1>
       </div>
-
     </main>
 
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>
