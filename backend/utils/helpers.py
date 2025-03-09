@@ -1,10 +1,8 @@
 import numpy as np
-import tensorflow as tf
 from PIL import Image
 import torch
 from torchvision import transforms
 import numpy as np
-import tensorflow as tf
 
 def preprocess_image_for_classifier(image, size = (224, 224)):
     if isinstance(image, np.ndarray):
@@ -100,21 +98,3 @@ def convert_img_numpy(masked_image):
     return masked_image
 
 
-def pad_to_square(image):
-    # Get original dimensions
-    old_h, old_w = image.shape[:2]
-    
-    # Find the larger dimension to make the image square
-    max_dim = max(old_h, old_w)
-    
-    # Calculate padding
-    pad_h = (max_dim - old_h) // 2
-    pad_w = (max_dim - old_w) // 2
-    
-    # Ensure padding is non-negative and compatible
-    padded_image = tf.image.pad_to_bounding_box(image, pad_h, pad_w, max_dim, max_dim)
-    
-    # Handle any excess due to rounding differences
-    padded_image = tf.image.resize_with_crop_or_pad(padded_image, max_dim, max_dim)
-    
-    return padded_image
