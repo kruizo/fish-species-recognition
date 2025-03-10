@@ -20,7 +20,7 @@ for filename, file_id in weights.items():
     file_path = os.path.join(weights_path, filename)
     
     if not os.path.exists(file_path):  
-        print(f"❌ {filename}🔽 Downloading...")
+        print(f"❌ {filename} 🔽 Downloading...")
         try:
             result = gdown.download(f"https://drive.google.com/uc?id={file_id}", file_path, quiet=False)
             if not result:

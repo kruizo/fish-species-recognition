@@ -6,24 +6,21 @@ import time
 import warnings
 import numpy as np
 import torch
-
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
-warnings.filterwarnings("ignore", category=DeprecationWarning)
-warnings.filterwarnings("ignore", category=FutureWarning)
-
 from flask import Blueprint, request, jsonify
 from PIL import Image, ImageFile
-
 # Models
 from backend.models.baseline import BASELINE_RESNET50
 from backend.models.proposed import PROPOSED_RESNET50
-# from backend.models.vgg import VGG16
 from backend.models.inception import INCEPTIONV3
 from backend.models.densenet import DENSENET121
 from backend.models.mobilenet import MOBILENET
 from backend.models.unet import UNET
 from backend.models.esrgan import ESRGAN
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+warnings.filterwarnings("ignore", category=DeprecationWarning)
+warnings.filterwarnings("ignore", category=FutureWarning)
 
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 
