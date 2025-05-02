@@ -119,6 +119,15 @@ document.addEventListener("DOMContentLoaded", function () {
       const file = fileInput.files[0];
       const formData = new FormData();
       formData.append("file", file);
+      
+      if (!file.type.startsWith("image/")) {
+        Swal.fire({
+          icon: "error",
+          title: "Invalid File",
+          text: "Please upload an image file.",
+        });
+        return;
+      }
 
       try {
         updateProgress(0);
@@ -134,6 +143,7 @@ document.addEventListener("DOMContentLoaded", function () {
         if (!currentData) {
           Swal.fire("Error", "Failed to process the file.", "error");
           resetFileDisplay();
+          console.log("trigger error")
           return;
         }
         const models = Object.entries(currentData.models);
