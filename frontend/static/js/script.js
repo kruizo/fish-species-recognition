@@ -93,6 +93,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     if (step === 1) {
       currentData = null;
+      fileInput.value = "";
     }
 
     currentSection = Object.keys(sections).find(
@@ -119,6 +120,12 @@ document.addEventListener("DOMContentLoaded", function () {
       const file = fileInput.files[0];
       const formData = new FormData();
       formData.append("file", file);
+
+      if (!file.type.startsWith("image/")) {
+        Swal.fire("Invalid File", "Please upload a valid image file.", "error");
+        resetFileDisplay();
+        return;
+      }
 
       try {
         updateProgress(0);
