@@ -27,11 +27,11 @@ ImageFile.LOAD_TRUNCATED_IMAGES = True
 api = Blueprint("backend", __name__)
 
 class_labels = [
-'Abudefduf Vaigiensis', 'Acanthurus Nigrofuscus', 'Balistapus Undulatus', 'Canthigaster Valentini', 
-'Chaetodon Trifascialis', 'Hemigymnus Fasciatus', 'Hemigymnus Melapterus', 'Lutjanus fulvus', 
-'Myripristis Kuntee', 'Neoglyphidodon Nigroris', 'Neoniphon Sammara', 'Pempheris Vanicolensis', 
-'Pomacentrus Moluccensis', 'Scaridae', 'Scolopsis Bilineata', 'Siganus Fuscescens', 'Zanclus Cornutus', 
-'Zebrasoma Scopas'
+'Abudefduf vaigiensis', 'Acanthurus nigrofuscus', 'Balistapus undulatus', 'Canthigaster valentini', 
+'Chaetodon trifascialis', 'Hemigymnus fasciatus', 'Hemigymnus melapterus', 'Lutjanus fulvus', 
+'Myripristis kuntee', 'Neoglyphidodon nigroris', 'Neoniphon sammara', 'Pempheris vanicolensis', 
+'Pomacentrus moluccensis', 'Scaridae', 'Scolopsis bilineata', 'Siganus fuscescens', 'Zanclus cornutus', 
+'Zebrasoma scopas'
 ]
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -171,39 +171,6 @@ def predict_densenet_endpoint():
         "prediction_time": prediction_time,
         "probabilities": probabilities.tolist()
     }), 200
-
-
-# @api.route('/predict/model/vgg', methods=['POST'])
-# def predict_model_endpoint():
-
-#     if "file" not in request.files:
-#         return jsonify({"error": "No file uploaded"}), 400
-
-#     file = request.files["file"]
-
-#     if not file:
-#         return jsonify({"error": "No file to be processed"}), 400
-    
-
-#     print('Image:', file)
-#     image = Image.open(file)
-
-#     original_buffered = BytesIO()
-#     image.save(original_buffered, format="PNG")
-#     original_img_str = base64.b64encode(original_buffered.getvalue()).decode('utf-8')
-#     original_img_str = f"data:image/png;base64,{original_img_str}"
-
-#     predicted_class, confidence, prediction_time, probabilities = vgg_model.predict(image)
-#     print(f"VGG= Prediction: {class_labels[predicted_class]} | Confidence: {confidence:.2f} | Prediction Time: {prediction_time:.3f}s")
-#     return jsonify({
-#         "name": 'vgg16',
-#         "image": original_img_str,
-#         "class_labels": class_labels,
-#         'prediction': class_labels[predicted_class],
-#         'confidence': confidence,
-#         'prediction_time': prediction_time,
-#         'probabilities': probabilities.tolist()
-#     }), 200
 
 @api.route("/predict", methods=["POST"])
 def predict_endpoint():

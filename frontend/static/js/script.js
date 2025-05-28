@@ -93,6 +93,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     if (step === 1) {
       currentData = null;
+      fileInput.value = "";
     }
 
     currentSection = Object.keys(sections).find(
@@ -126,6 +127,12 @@ document.addEventListener("DOMContentLoaded", function () {
           title: "Invalid File",
           text: "Please upload an image file.",
         });
+        return;
+      }
+
+      if (!file.type.startsWith("image/")) {
+        Swal.fire("Invalid File", "Please upload a valid image file.", "error");
+        resetFileDisplay();
         return;
       }
 
