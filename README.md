@@ -70,6 +70,12 @@ fish-specie-recognition/
 5. **View training & experiments:**
    - Training notebooks can be found in `github.com/kruizo/model-training`.
 
+## Screenshots
+
+![Home Page](demo/f1.png)
+![Home Page](demo/f2.png)
+![Home Page](demo/f4.png)
+
 ## Acknowledgements
 
 - This project is a thesis requirement with baseline from FishResNet study.
