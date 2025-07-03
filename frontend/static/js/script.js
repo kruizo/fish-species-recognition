@@ -93,6 +93,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     if (step === 1) {
       currentData = null;
+      fileInput.value = ''; 
     }
 
     currentSection = Object.keys(sections).find(

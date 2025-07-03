@@ -27,11 +27,11 @@ ImageFile.LOAD_TRUNCATED_IMAGES = True
 api = Blueprint("backend", __name__)
 
 class_labels = [
-'Abudefduf Vaigiensis', 'Acanthurus Nigrofuscus', 'Balistapus Undulatus', 'Canthigaster Valentini', 
-'Chaetodon Trifascialis', 'Hemigymnus Fasciatus', 'Hemigymnus Melapterus', 'Lutjanus fulvus', 
-'Myripristis Kuntee', 'Neoglyphidodon Nigroris', 'Neoniphon Sammara', 'Pempheris Vanicolensis', 
-'Pomacentrus Moluccensis', 'Scaridae', 'Scolopsis Bilineata', 'Siganus Fuscescens', 'Zanclus Cornutus', 
-'Zebrasoma Scopas'
+'Abudefduf vaigiensis', 'Acanthurus nigrofuscus', 'Balistapus undulatus', 'Canthigaster valentini', 
+'Chaetodon trifascialis', 'Hemigymnus fasciatus', 'Hemigymnus melapterus', 'Lutjanus fulvus', 
+'Myripristis kuntee', 'Neoglyphidodon Nigroris', 'Neoniphon Sammara', 'Pempheris Vanicolensis', 
+'Pomacentrus moluccensis', 'Scaridae', 'Scolopsis bilineata', 'Siganus fuscescens', 'Zanclus cornutus', 
+'Zebrasoma scopas'
 ]
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
