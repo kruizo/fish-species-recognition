@@ -29,7 +29,7 @@ api = Blueprint("backend", __name__)
 class_labels = [
 'Abudefduf vaigiensis', 'Acanthurus nigrofuscus', 'Balistapus undulatus', 'Canthigaster valentini', 
 'Chaetodon trifascialis', 'Hemigymnus fasciatus', 'Hemigymnus melapterus', 'Lutjanus fulvus', 
-'Myripristis kuntee', 'Neoglyphidodon nigroris', 'Neoniphon sammara', 'Pempheris vanicolensis', 
+'Myripristis kuntee', 'Neoglyphidodon Nigroris', 'Neoniphon Sammara', 'Pempheris Vanicolensis', 
 'Pomacentrus moluccensis', 'Scaridae', 'Scolopsis bilineata', 'Siganus fuscescens', 'Zanclus cornutus', 
 'Zebrasoma scopas'
 ]

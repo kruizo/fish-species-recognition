@@ -120,7 +120,7 @@ document.addEventListener("DOMContentLoaded", function () {
       const file = fileInput.files[0];
       const formData = new FormData();
       formData.append("file", file);
-      
+
       if (!file.type.startsWith("image/")) {
         Swal.fire({
           icon: "error",
@@ -150,7 +150,7 @@ document.addEventListener("DOMContentLoaded", function () {
         if (!currentData) {
           Swal.fire("Error", "Failed to process the file.", "error");
           resetFileDisplay();
-          console.log("trigger error")
+          console.log("trigger error");
           return;
         }
         const models = Object.entries(currentData.models);
